@@ -35,7 +35,7 @@ export function Navbar({
   return (
       <Box mb={2}>
         <nav className="navbar">
-          <Flex>
+          <Flex align='center'>
             <Box p='4'>
               <Flex align="center">
                 <Box>
@@ -61,21 +61,13 @@ export function Navbar({
             {
                 profile && (
                     <Box p='4'>
-                      <div className="profile">
-                        <div className="dropdown dropdown-end">
-                          <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
-                            <div className="w-10 rounded-full">
-                              <Image
-                                  src={profile.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
-                                  alt="user profile picture"
-                                  objectFit="cover"
-                                  boxSize="4rem"
-                                  borderRadius='full'
-                              />
-                            </div>
-                          </label>
-                        </div>
-                      </div>
+                      <Image
+                          src={profile.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                          alt="user profile picture"
+                          objectFit="cover"
+                          boxSize="2.5rem"
+                          borderRadius='full'
+                      />
                     </Box>
                 )
             }
