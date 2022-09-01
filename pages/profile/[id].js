@@ -146,7 +146,7 @@ export default function Profile() {
         )
       }
       <Flex>
-        <Box bg={useColorModeValue('gray.100', 'gray.900')} pb={8} w='full'>
+        <Box bg='gray.100' _dark={{ bg: 'gray.900'}} pb={8} w='full'>
           <Flex>
             {
               profile.picture ? (
