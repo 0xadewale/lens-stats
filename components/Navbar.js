@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import { useColorMode } from '@chakra-ui/react'
 import { SunIcon, MoonIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
-import { createClient, searchProfiles } from '../api'
 import {
   Flex,
   Box,
@@ -55,7 +54,7 @@ export function Navbar({
             </Box>
             <Spacer />
             <Box p={4}>
-              <Button onClick={toggleColorMode}>
+              <Button variant='ghost' onClick={toggleColorMode}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon /> }
               </Button>
             </Box>

@@ -14,6 +14,19 @@ import { getSigner } from '../../utils'
 import ReactMarkdown from 'react-markdown'
 
 import LENSHUB from '../../abi/lenshub.json'
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Flex,
+  Heading,
+  Image,
+  Spacer,
+  Stat, StatArrow, StatGroup, StatHelpText, StatLabel, StatNumber,
+  Text,
+  useColorModeValue
+} from "@chakra-ui/react";
 
 export default function Profile() {
   const [profile, setProfile] = useState()
@@ -63,6 +76,7 @@ export default function Profile() {
         profile: profileData, publications: publicationData
       } = await fetchProfile(id)
       setProfile(profileData)
+      console.log(profileData)
       setPublications(publicationData)
       setLoadedState('loaded')
     } catch (err) {
@@ -114,74 +128,138 @@ export default function Profile() {
   const profileOwner = userProfile?.id === id
 
   return (
-    <div className={containerStyle}>
-      <div
-        className={css`
-          ${headerStyle};
-          background-image: url(${profile.coverPicture?.original.url});
-          background-color: ${profile.color};
-        `}
-      >
-      </div>
-      <div className={columnWrapperStyle}>
-        <div>
-          <img className={
-            css`
-              ${profileImageStyle};
-              background-color: profile.color;
-            `
-          } src={profile.picture?.original?.url} />
-          <h3 className={nameStyle}>{profile.name}</h3>
-          <p className={handleStyle}>{profile.handle}</p>
-          <p className={bioStyle}>{profile.bio}</p>
-          <div>
+    <div>
+      {
+        profile.coverPicture ? (
+            <Image
+                src={profile.coverPicture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                objectFit='cover'
+                w='full'
+                h={{ sm: '15rem', md: '20rem' }}
+            />
+        ) : (
+            <Box
+                bg={profile.color}
+                w='full'
+                h={{ sm: '10rem', md: '15rem' }}
+            />
+        )
+      }
+      <Flex>
+        <Box bg={useColorModeValue('gray.100', 'gray.900')} pb={8} w='full'>
+          <Flex>
             {
-              userAddress && !profileOwner ? (
-                doesFollow ? (
-                  <button
-                   onClick={unfollow}
-                   className={buttonStyle}
-                 >Unfollow</button>
+              profile.picture ? (
+                  <Image
+                      src={profile.picture.original?.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                      w={{ sm: '10rem', md: '15rem' }}
+                      h={{ sm: '10rem', md: '15rem' }}
+                      borderRadius='xl'
+                      ml={{ sm: 6, md: '4rem'}}
+                      mt={{ sm: '-2rem', md: '-4rem'}}
+                  />
                 ) : (
-                  <button
-                    onClick={followUser}
-                    className={buttonStyle}
-                  >Follow</button>
-                )
-              ) : null
-            }
-            {
-              profileOwner && (
-                <button
-                  onClick={editProfile}
-                  className={buttonStyle}
-                >Edit Profile</button>
+                  <Box
+                      w={{ sm: '10rem', md: '15rem' }}
+                      h={{ sm: '10rem', md: '15rem' }}
+                      borderRadius='xl'
+                      ml={{ sm: 6, md: '4rem'}}
+                      mt={{ sm: '-2rem', md: '-4rem'}}
+                      bg='gray.500'
+                  />
               )
             }
-          </div>
-        </div>
-        <div className={rightColumnStyle}>
-          <h3 className={postHeaderStyle}>Posts</h3>
-          {
-            publications.map((pub, index) => (
-              <div className={publicationWrapper} key={index}>
-                <ReactMarkdown>
-                  {pub.metadata.content}
-                </ReactMarkdown>
-              </div>
-            ))
-          }
-          {
-            loadedState === 'loaded' && !publications.length && (
-              <div className={emptyPostContainerStyle}>
-                <p className={emptyPostTextStyle}>
-                  <span className={emptyPostHandleStyle}>{profile.handle}</span> has not posted yet!
-                </p>
-              </div>
-            )
-          }
-        </div>
-      </div>
+            <Flex w='full' alignItems='center' flexDirection={{ sm: 'column', md: 'row'}}>
+              <Box p={4}>
+                <Heading fontSize={'2xl'} fontFamily={'body'} mb={4}>
+                  { profile.handle }
+                </Heading>
+                <Flex>
+                  <Box>
+                    <Text fontWeight={600}>
+                      { profile.stats.totalFollowers }
+                    </Text>
+                    <Text fontWeight={500} color={'gray.500'} size="sm">
+                      Followers
+                    </Text>
+                  </Box>
+                  <Box ml={4}>
+                    <Text fontWeight={600}>
+                      { profile.stats.totalFollowing }
+                    </Text>
+                    <Text fontWeight={500} color={'gray.500'} size="sm">
+                      Following
+                    </Text>
+                  </Box>
+                  <Box ml={4}>
+                    <Text fontWeight={600}>
+                      { profile.stats.totalPublications }
+                    </Text>
+                    <Text fontWeight={500} color={'gray.500'} size="sm">
+                      Publications
+                    </Text>
+                  </Box>
+                </Flex>
+              </Box>
+              <Spacer />
+              <Box>
+                {
+                  userAddress && !profileOwner ? (
+                      doesFollow ? (
+                          <Button
+                              mr={2}
+                              colorScheme='red'
+                              variant='solid'
+                              onClick={unfollow}
+                          >
+                            Unfollow
+                          </Button>
+                      ) : (
+                          <Button
+                              mr={2}
+                              colorScheme='teal'
+                              variant='solid'
+                              onClick={followUser}
+                          >
+                            Follow
+                          </Button>
+                      )
+                  ) : null
+                }
+              </Box>
+            </Flex>
+          </Flex>
+        </Box>
+      </Flex>
+      <Flex mt={4}>
+        <Box
+            w='full'
+            borderRadius='lg'
+            borderWidth={1}
+            mx={2}
+            p={4}
+            align='center'
+        >
+          <StatGroup>
+            <Stat>
+              <StatLabel>Posts</StatLabel>
+              <StatNumber>{ profile.stats.totalPosts }</StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel>Collects</StatLabel>
+              <StatNumber>{ profile.stats.totalCollects }</StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel>Comments</StatLabel>
+              <StatNumber>{ profile.stats.totalComments }</StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel>Mirrors</StatLabel>
+              <StatNumber>{ profile.stats.totalMirrors }</StatNumber>
+            </Stat>
+          </StatGroup>
+        </Box>
+      </Flex>
     </div>
   )
 }
