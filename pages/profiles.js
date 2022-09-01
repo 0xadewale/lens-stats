@@ -73,7 +73,7 @@ export default function Home() {
                     }
 
                     <div className={profileInfoStyle}>
-                      <h3 className={nameStyle}>{profile.name}</h3>
+                      <h3 className={nameStyle}>{profile.name} </h3>
                       <p className={handleStyle}>{profile.handle}</p>
                     </div>
                   </div>
