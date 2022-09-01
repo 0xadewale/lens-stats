@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useColorMode } from '@chakra-ui/react'
+import {Image, useColorMode} from '@chakra-ui/react'
 import { SunIcon, MoonIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import {
@@ -60,13 +60,18 @@ export function Navbar({
             </Box>
             {
                 profile && (
-                    <Box p='4' bg='green.400'>
+                    <Box p='4'>
                       <div className="profile">
-                        <button className="btn btn-ghost btn-circle">Search</button>
                         <div className="dropdown dropdown-end">
                           <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
                             <div className="w-10 rounded-full">
-                              <img src={profile.picture.original.url} alt="user profile picture" />
+                              <Image
+                                  src={profile.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                                  alt="user profile picture"
+                                  objectFit="cover"
+                                  boxSize="4rem"
+                                  borderRadius='full'
+                              />
                             </div>
                           </label>
                         </div>
