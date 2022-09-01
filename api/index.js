@@ -59,7 +59,8 @@ export {
   explorePublications,
   doesFollow,
   getChallenge,
-  timeline
+  timeline,
+  globalProtocolStats
 } from './queries'
 
 export {

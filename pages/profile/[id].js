@@ -13,7 +13,7 @@ import { AppContext } from '../../context'
 import { getSigner } from '../../utils'
 import ReactMarkdown from 'react-markdown'
 
-import LENSHUB from '../../abi/lenshub'
+import LENSHUB from '../../abi/lenshub.json'
 
 export default function Profile() {
   const [profile, setProfile] = useState()

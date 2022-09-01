@@ -580,6 +580,29 @@ const searchProfiles = `
   }
 `
 
+const globalProtocolStats = `
+query GlobalProtocolStats {
+  globalProtocolStats(request: null) {
+    totalProfiles
+    totalBurntProfiles
+    totalPosts
+    totalMirrors
+    totalComments
+    totalCollects
+    totalFollows
+    totalRevenue {
+      asset {
+        name
+        symbol
+        decimals
+        address
+      }
+      value
+    }
+  }
+}
+`
+
 const explorePublications = `
   query {
     explorePublications(request: {
@@ -1101,5 +1124,6 @@ export {
   explorePublications,
   doesFollow,
   getChallenge,
-  timeline
+  timeline,
+  globalProtocolStats
 }

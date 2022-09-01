@@ -3,51 +3,32 @@ import { createClient, searchProfiles, recommendProfiles, getPublications } from
 import { css } from '@emotion/css'
 import { trimString, generateRandomColor } from '../utils'
 import { Button, SearchInput, Placeholders } from '../components'
-import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export default function Home() {
+  const router = useRouter()
+  const { search } = router.query
   const [profiles, setProfiles] = useState([])
   const [loadingState, setLoadingState] = useState('loading')
   const [searchString, setSearchString] = useState('')
 
   useEffect(() => {
-    getRecommendedProfiles() 
-  }, [])
-
-  async function getRecommendedProfiles() {
-    try {
-      const urqlClient = await createClient()
-      const response = await urqlClient.query(recommendProfiles).toPromise()
-      const profileData = await Promise.all(response.data.recommendedProfiles.map(async profile => {
-        const pub = await urqlClient.query(getPublications, { id: profile.id, limit: 1 }).toPromise()
-        profile.publication = pub.data.publications.items[0]
-        profile.backgroundColor = generateRandomColor()
-        return profile
-      }))
-      setProfiles(profileData)
-      setLoadingState('loaded')
-    } catch (err) {
-      console.log('error fetching recommended profiles: ', err)
+    if (search) {
+      searchForProfile()
     }
-  }
+  },[search])
 
   async function searchForProfile() {
-    if (!searchString) return
     try {
       const urqlClient = await createClient()
       const response = await urqlClient.query(searchProfiles, {
-        query: searchString, type: 'PROFILE'
+        query: search, type: 'PROFILE'
       }).toPromise()
-      const profileData = await Promise.all(response.data.search.items.map(async profile => {
-        const pub = await urqlClient.query(getPublications, { id: profile.profileId, limit: 1 }).toPromise()
-        profile.id = profile.profileId
-        profile.backgroundColor = generateRandomColor()
-        profile.publication = pub.data.publications.items[0]
-        return profile
-      }))
-
+      const profileData = await Promise.all(response.data.search.items)
+      console.log(profileData)
       setProfiles(profileData)
+      setLoadingState('loaded')
     } catch (err) {
       console.log('error searching profiles...', err)
     }
@@ -58,34 +39,22 @@ export default function Home() {
       searchForProfile()
     }
   }
-  
+
   return (
     <div>
-      <div className={searchContainerStyle}>
-        <SearchInput
-          placeholder='Search'
-          onChange={e => setSearchString(e.target.value)}
-          value={searchString}
-          onKeyDown={handleKeyDown}      
-        />
-        <Button
-          onClick={searchForProfile}
-          buttonText="SEARCH PROFILES"
-        />
-      </div>
       <div className={listItemContainerStyle}>
         {
            loadingState === 'loading' && <Placeholders number={6} />
         }
         {
           profiles.map((profile, index) => (
-            <Link href={`/profile/${profile.id}`} key={index}>
+            <Link href={`/profile/${profile.profileId}`} key={index}>
               <a>
                 <div className={listItemStyle}>
                   <div className={profileContainerStyle} >
                     {
                       profile.picture && profile.picture.original ? (
-                      <Image
+                      <img
                         src={profile.picture.original.url}
                         className={profileImageStyle}
                         width="42px"
@@ -102,7 +71,7 @@ export default function Home() {
                         />
                       )
                     }
-                    
+
                     <div className={profileInfoStyle}>
                       <h3 className={nameStyle}>{profile.name}</h3>
                       <p className={handleStyle}>{profile.handle}</p>
