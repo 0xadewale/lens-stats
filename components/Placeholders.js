@@ -1,4 +1,5 @@
 import { css, keyframes } from '@emotion/css'
+import {Box, Center, Skeleton} from "@chakra-ui/react";
 
 export function Placeholders({
   number
@@ -6,34 +7,16 @@ export function Placeholders({
   const rows = []
   for (let i = 0; i < number; i ++) {
     rows.push(
-      <div
-        className={grayLoadingStyle}
-        key={i}
-      />
+        <Center py={4}>
+          <Skeleton
+              h='7rem'
+              w={{ base: '100%', md: '540px' }}
+              rounded={'md'}
+              borderWidth={1}
+              borderRadius='lg'
+          />
+        </Center>
     )
   }
   return rows
 }
-
-const shimmer = keyframes`
-  from {
-    opacity: .2;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: .2;
-  }
-`
-
-const grayLoadingStyle = css`
-  background-color: rgba(0, 0, 0, .1);
-  height: 115px;
-  width: 100%;
-  margin-top: 13px;
-  border-radius: 7px;
-  animation: ${shimmer} 2s infinite linear;
-`

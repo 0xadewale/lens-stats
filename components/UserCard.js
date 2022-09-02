@@ -16,7 +16,7 @@ import {css} from "@emotion/css";
 export function UserCard({ user }) {
     return (
         <Link href={`/profile/${user.profileId}`} style={{ textDecoration: 'none' }}>
-            <Center py={6}>
+            <Center py={4}>
                 <Stack
                     borderWidth="1px"
                     borderRadius="xl"

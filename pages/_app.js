@@ -5,11 +5,11 @@ import { useRouter } from 'next/router'
 import { createClient, STORAGE_KEY, authenticate as authenticateMutation, getChallenge, getDefaultProfile } from '../api'
 import { parseJwt, refreshAuthToken } from '../utils'
 import { AppContext } from '../context'
-import Modal from '../components/CreatePostModal'
 import { ChakraProvider } from '@chakra-ui/react'
 import { Navbar } from '../components/Navbar'
 import { Box } from '@chakra-ui/react'
 import theme from '../theme'
+import {Footer} from "../components/Footer";
 
 function MyApp({ Component, pageProps }) {
   const [connected, setConnected] = useState(false)
@@ -101,9 +101,10 @@ function MyApp({ Component, pageProps }) {
                 metamask={metamask}
                 signIn={signIn}
             />
-            <Box py={4}>
+            <Box py={4} minH='76vh'>
               <Component {...pageProps} />
             </Box>
+            <Footer />
           </div>
         </AppContext.Provider>
       </ChakraProvider>

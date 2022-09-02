@@ -33,21 +33,19 @@ export default function Home() {
 
   return (
     <div>
-      <div>
-        {
-           loadingState === 'loading' && <Placeholders number={6} />
-        }
-        {
-          !profiles.length && (
-                <Center>Aucun résultat</Center>
-            )
-        }
-        {
-          profiles.map((profile, index) => (
-              <UserCard key={index} user={profile} />
-          ))
-        }
-      </div>
+      {
+         loadingState === 'loading' && <Placeholders number={6} />
+      }
+      {
+        !profiles.length && (
+              <Center>No Results</Center>
+          )
+      }
+      {
+        profiles.map((profile, index) => (
+            <UserCard key={index} user={profile} />
+        ))
+      }
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import {Badge, IconButton, Image, Menu, MenuButton, MenuItem, MenuList, useColorMode} from '@chakra-ui/react'
+import {Badge, IconButton, Image, Menu, MenuButton, MenuItem, MenuList, Show, useColorMode} from '@chakra-ui/react'
 import { SunIcon, MoonIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import {
@@ -50,6 +50,35 @@ export function Navbar({
                       onChange={inputHandler}
                   />
                 </Box>
+                <Show above='md'>
+                  <Link href='/'>
+                    <Button
+                        mx={2}
+                        size='sm'
+                        variant={router.pathname === '/' ? 'solid' : 'ghost'}
+                    >
+                      Home
+                    </Button>
+                  </Link>
+                  <Link href='/giveaway'>
+                    <Button
+                        mx={2}
+                        size='sm'
+                        variant={router.pathname === '/giveaway' ? 'solid' : 'ghost'}
+                    >
+                      Giveaway
+                    </Button>
+                  </Link>
+                  <Link href='/explore'>
+                    <Button
+                        mx={2}
+                        size='sm'
+                        variant={router.pathname === '/explore' ? 'solid' : 'ghost'}
+                    >
+                      Explore
+                    </Button>
+                  </Link>
+                </Show>
               </Flex>
             </Box>
             <Spacer />
@@ -79,7 +108,7 @@ export function Navbar({
                       </MenuButton>
                       <MenuList>
                         <MenuItem>
-                          Logout
+                          My Profile
                         </MenuItem>
                       </MenuList>
                     </Menu>
