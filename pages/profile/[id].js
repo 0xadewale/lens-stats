@@ -230,7 +230,7 @@ export default function Profile() {
                   />
               )
             }
-            <Flex w='full' alignItems='center' flexDirection={{ base: 'column', md: 'row'}}>
+            <Flex w='full'  justify='space-between' alignItems='center' flexDirection={{ base: 'column', md: 'row'}}>
               <Box p={4}>
                 <Heading textAlign={{ base: 'center', md: 'left'}} fontSize={'2xl'} fontFamily={'body'} mb={4}>
                   { profile.handle }
@@ -267,7 +267,7 @@ export default function Profile() {
                   userAddress && !profileOwner ? (
                       doesFollow ? (
                           <Button
-                              mr={2}
+                              mr={4}
                               colorScheme='red'
                               variant='solid'
                               onClick={unfollow}
@@ -276,7 +276,7 @@ export default function Profile() {
                           </Button>
                       ) : (
                           <Button
-                              mr={2}
+                              mr={4}
                               colorScheme='teal'
                               variant='solid'
                               onClick={followUser}
@@ -330,12 +330,13 @@ export default function Profile() {
                               <TopUserCard label='Top collector' user={bestCollector} />
                           ) : (
                               <Box
-                                  h='25rem'
+                                  h='26rem'
                                   w='20rem'
                                   rounded={'md'}
                                   borderWidth={1}
                                   borderRadius='lg'
                                   mx={4}
+                                  py={6}
                               >
                                 <Center h='full'>
                                   No Top collector
@@ -348,12 +349,13 @@ export default function Profile() {
                               <TopUserCard label='Top commentary' user={bestCommentary} />
                           ): (
                             <Box
-                                h='25rem'
+                                h='26rem'
                                 w='20rem'
                                 rounded={'md'}
                                 borderWidth={1}
                                 borderRadius='lg'
                                 mx={4}
+                                py={6}
                             >
                               <Center h='full'>
                                 No Top commentary
@@ -365,20 +367,22 @@ export default function Profile() {
             ) :
                 <Flex alignItems='center' justify={{ base: 'center', md: 'center'}} flexDirection={{ base: 'column', md: 'row'}}>
                   <Skeleton
-                      h='25rem'
+                      h='26rem'
                       w='20rem'
                       rounded={'md'}
                       borderWidth={1}
                       borderRadius='lg'
                       mx={4}
+                      my={6}
                   />
                   <Skeleton
-                      h='25rem'
+                      h='26rem'
                       w='20rem'
                       rounded={'md'}
                       borderWidth={1}
                       borderRadius='lg'
                       mx={4}
+                      my={6}
                   />
                 </Flex>
           }

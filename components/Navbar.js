@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import {Image, useColorMode} from '@chakra-ui/react'
+import {Badge, IconButton, Image, Menu, MenuButton, MenuItem, MenuList, useColorMode} from '@chakra-ui/react'
 import { SunIcon, MoonIcon } from '@chakra-ui/icons'
 import { useState } from 'react'
 import {
@@ -57,31 +57,41 @@ export function Navbar({
               {colorMode === 'light' ? <MoonIcon /> : <SunIcon /> }
             </Button>
             {
-                profile && (
-                    <Box p='4'>
-                      <Image
-                          src={profile.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
-                          alt="user profile picture"
-                          objectFit="cover"
-                          boxSize="2.5rem"
-                          borderRadius='full'
-                      />
-                    </Box>
-                )
-            }
-            {
-                metamask && connected && !profile && (
-                    <Box pr='4' pl={2}>
-                      Chargement
-                      <Progress size='xs' isIndeterminate />
-                    </Box>
+                connected && profile && (
+                    <Menu>
+                      <MenuButton>
+                        <Box p='4'>
+                          <Image
+                              src={profile.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                              alt="user profile picture"
+                              objectFit="cover"
+                              boxSize="2.5rem"
+                              borderRadius='full'
+                          />
+                        </Box>
+                      </MenuButton>
+                      <MenuList>
+                        <MenuItem>
+                          Logout
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
                 )
             }
             {
                 !connected && (
-                    <Box pr={4} pl={2}>
-                      <Button colorScheme="teal" onClick={signIn}>Login</Button>
-                    </Box>
+                    <div>
+                      <Box pr={4} pl={2}>
+                        <Button colorScheme="teal" onClick={signIn}>Login</Button>
+                      </Box>
+                    </div>
+                )
+            }
+            {
+              connected && !profile && (
+                  <Badge p={1} fontSize="0.6rem" mr={4} colorScheme='teal'>
+                    No Lens profile
+                  </Badge>
                 )
             }
           </Flex>

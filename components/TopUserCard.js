@@ -16,7 +16,7 @@ export function TopUserCard({ user, label }) {
         <Center py={6} mx={4}>
             <Box
                 w={'20rem'}
-                h={'25rem'}
+                h={'26rem'}
                 bg={useColorModeValue('white', 'gray.900')}
                 boxShadow={'lg'}
                 rounded={'md'}
@@ -32,17 +32,6 @@ export function TopUserCard({ user, label }) {
                             alt={'Avatar Alt'}
                             mb={4}
                             pos={'relative'}
-                            _after={{
-                                content: '""',
-                                w: 4,
-                                h: 4,
-                                bg: 'green.300',
-                                border: '2px solid white',
-                                rounded: 'full',
-                                pos: 'absolute',
-                                bottom: 0,
-                                right: 3,
-                            }}
                         />
                         <Heading fontSize={'2xl'} fontFamily={'body'}>
                             { label }
@@ -54,6 +43,7 @@ export function TopUserCard({ user, label }) {
                             textAlign={'center'}
                             color={useColorModeValue('gray.700', 'gray.400')}
                             px={3}
+                            noOfLines={2}
                         >
                             { user.bio }
                         </Text>
