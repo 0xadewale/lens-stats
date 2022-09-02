@@ -11,6 +11,7 @@ import {
   Button,
   Progress
 } from '@chakra-ui/react'
+import AccountDropdown from "./AccountDropdown";
 
 export function Navbar({
     connected,
@@ -94,26 +95,7 @@ export function Navbar({
             }
             {
                 connected && profile && (
-                    <Menu>
-                      <MenuButton>
-                        <Box p='4'>
-                          <Image
-                              src={profile.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
-                              alt="user profile picture"
-                              objectFit="cover"
-                              boxSize="2.5rem"
-                              borderRadius='full'
-                          />
-                        </Box>
-                      </MenuButton>
-                      <MenuList>
-                        <MenuItem>
-                          <Link href={'/profile/' + profile.id}>
-                            My Stats
-                          </Link>
-                        </MenuItem>
-                      </MenuList>
-                    </Menu>
+                    <AccountDropdown profile={profile} />
                 )
             }
             {

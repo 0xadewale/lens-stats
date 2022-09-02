@@ -1,4 +1,3 @@
-import { css, keyframes } from '@emotion/css'
 import {Box, Center, Skeleton} from "@chakra-ui/react";
 
 export function Placeholders({

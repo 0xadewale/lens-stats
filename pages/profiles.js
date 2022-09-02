@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { createClient, searchProfiles } from '../api'
 import { useRouter } from 'next/router'
 import { UserCard } from "../components/UserCard";
-import {Placeholders} from "../components";
+import {Placeholders} from "../components/Placeholders";
 import {Center} from "@chakra-ui/react";
 
 export default function Home() {
