@@ -147,29 +147,29 @@ export default function Profile() {
       }
       <Flex>
         <Box bg='gray.100' _dark={{ bg: 'gray.900'}} pb={8} w='full'>
-          <Flex>
+          <Flex flexDirection={{ base: 'column', md: 'row'}} alignItems={{ base: 'center', md: ''}}>
             {
               profile.picture ? (
                   <Image
                       src={profile.picture.original?.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
-                      w={{ sm: '10rem', md: '15rem' }}
-                      h={{ sm: '10rem', md: '15rem' }}
+                      w={{ base: '10rem', md: '15rem' }}
+                      h={{ base: '10rem', md: '15rem' }}
                       borderRadius='xl'
-                      ml={{ sm: 6, md: '4rem'}}
-                      mt={{ sm: '-2rem', md: '-4rem'}}
+                      ml={{ base: 6, md: '4rem'}}
+                      mt={{ base: '-2rem', md: '-4rem'}}
                   />
                 ) : (
                   <Box
-                      w={{ sm: '10rem', md: '15rem' }}
-                      h={{ sm: '10rem', md: '15rem' }}
+                      w={{ base: '10rem', md: '15rem' }}
+                      h={{ base: '10rem', md: '15rem' }}
                       borderRadius='xl'
-                      ml={{ sm: 6, md: '4rem'}}
-                      mt={{ sm: '-2rem', md: '-4rem'}}
+                      ml={{ base: 6, md: '4rem'}}
+                      mt={{ base: '-2rem', md: '-4rem'}}
                       bg='gray.500'
                   />
               )
             }
-            <Flex w='full' alignItems='center' flexDirection={{ sm: 'column', md: 'row'}}>
+            <Flex w='full' alignItems='center' flexDirection={{ base: 'column', md: 'row'}}>
               <Box p={4}>
                 <Heading fontSize={'2xl'} fontFamily={'body'} mb={4}>
                   { profile.handle }

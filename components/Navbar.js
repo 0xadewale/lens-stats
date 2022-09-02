@@ -53,11 +53,9 @@ export function Navbar({
               </Flex>
             </Box>
             <Spacer />
-            <Box p={4}>
-              <Button variant='ghost' onClick={toggleColorMode}>
-                {colorMode === 'light' ? <MoonIcon /> : <SunIcon /> }
-              </Button>
-            </Box>
+            <Button variant='ghost' onClick={toggleColorMode}>
+              {colorMode === 'light' ? <MoonIcon /> : <SunIcon /> }
+            </Button>
             {
                 profile && (
                     <Box p='4'>
@@ -73,14 +71,15 @@ export function Navbar({
             }
             {
                 metamask && connected && !profile && (
-                    <Box p='4'>
+                    <Box pr='4' pl={2}>
+                      Chargement
                       <Progress size='xs' isIndeterminate />
                     </Box>
                 )
             }
             {
                 !connected && (
-                    <Box py='4' pr={4}>
+                    <Box pr={4} pl={2}>
                       <Button colorScheme="teal" onClick={signIn}>Login</Button>
                     </Box>
                 )

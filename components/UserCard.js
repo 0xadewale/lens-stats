@@ -20,13 +20,13 @@ export function UserCard({ user }) {
                 <Stack
                     borderWidth="1px"
                     borderRadius="xl"
-                    w={{ sm: '100%', md: '540px' }}
+                    w={{ base: '100%', md: '540px' }}
                     height='7rem'
                     direction='row'
                     bg={useColorModeValue('white', 'gray.900')}
                     boxShadow={'md'}
                     padding={4}>
-                    <Flex flex={1}>
+                    <Flex flex={{ base: 2, sm: 1}}>
                         {
                             user.picture && user.picture.original ? (
                                 <Image
@@ -45,7 +45,7 @@ export function UserCard({ user }) {
                         }
                     </Flex>
                     <Stack
-                        flex={5}
+                        flex={{ base: 4, sm: 5}}
                         flexDirection="column"
                         justifyContent="center"
                         alignItems="start"

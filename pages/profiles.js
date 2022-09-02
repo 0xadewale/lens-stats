@@ -3,6 +3,7 @@ import { createClient, searchProfiles } from '../api'
 import { useRouter } from 'next/router'
 import { UserCard } from "../components/UserCard";
 import {Placeholders} from "../components";
+import {Center} from "@chakra-ui/react";
 
 export default function Home() {
   const router = useRouter()
@@ -35,6 +36,11 @@ export default function Home() {
       <div>
         {
            loadingState === 'loading' && <Placeholders number={6} />
+        }
+        {
+          !profiles.length && (
+                <Center>Aucun résultat</Center>
+            )
         }
         {
           profiles.map((profile, index) => (
