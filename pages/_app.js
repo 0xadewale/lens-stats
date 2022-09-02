@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { createClient, STORAGE_KEY, authenticate as authenticateMutation, getChallenge, getDefaultProfile } from '../api'
 import { parseJwt, refreshAuthToken } from '../utils'
 import { AppContext } from '../context'
-import Modal from '../components/CreatePostModal'
 import { ChakraProvider } from '@chakra-ui/react'
 import { Navbar } from '../components/Navbar'
 import { Box } from '@chakra-ui/react'
@@ -15,27 +14,21 @@ function MyApp({ Component, pageProps }) {
   const [connected, setConnected] = useState(true)
   const [userAddress, setUserAddress] = useState()
   const [userProfile, setUserProfile] = useState()
-  const [metamask, setMetamask] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
     refreshAuthToken()
     async function checkConnection() {
-      if (typeof window.ethereum !== 'undefined') {
-        setMetamask(true)
-        const provider = new ethers.providers.Web3Provider(
-            (window).ethereum
-        )
-        const addresses = await provider.listAccounts();
-        if (addresses.length) {
-          setConnected(true)
-          setUserAddress(addresses[0])
-          getUserProfile(addresses[0])
-        } else {
-          setConnected(false)
-        }
+      const provider = new ethers.providers.Web3Provider(
+          (window).ethereum
+      )
+      const addresses = await provider.listAccounts();
+      if (addresses.length) {
+        setConnected(true)
+        setUserAddress(addresses[0])
+        getUserProfile(addresses[0])
       } else {
-        setMetamask(false)
+        setConnected(false)
       }
     }
     checkConnection()
@@ -99,7 +92,6 @@ function MyApp({ Component, pageProps }) {
             <Navbar
                 connected={connected}
                 profile={userProfile}
-                metamask={metamask}
                 signIn={signIn}
             />
             <Box py={4}>

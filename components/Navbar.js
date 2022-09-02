@@ -15,7 +15,6 @@ import {
 export function Navbar({
     connected,
     profile,
-    metamask,
     signIn
 }) {
   const { colorMode, toggleColorMode } = useColorMode()
