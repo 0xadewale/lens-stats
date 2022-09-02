@@ -94,18 +94,18 @@ function MyApp({ Component, pageProps }) {
           userAddress,
           profile: userProfile
         }}>
-          <div>
+          <Box position='relative' minH='100vh'>
             <Navbar
                 connected={connected}
                 profile={userProfile}
                 metamask={metamask}
                 signIn={signIn}
             />
-            <Box py={4} minH='76vh'>
+            <Box pt={4} pb='10rem'>
               <Component {...pageProps} />
             </Box>
             <Footer />
-          </div>
+          </Box>
         </AppContext.Provider>
       </ChakraProvider>
   )

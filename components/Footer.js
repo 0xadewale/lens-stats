@@ -14,7 +14,15 @@ export function Footer() {
 
   return (
       <footer>
-        <Box w='full' bg='gray.200' py={6} _dark={{ bg: 'gray.900'}}>
+        <Box
+            w='full'
+            h='10rem'
+            bg='gray.200'
+            py={6}
+            _dark={{ bg: 'gray.900'}}
+            position='absolute'
+            bottom="0"
+        >
           <Center h='full' flexDirection='column'>
               <Flex>
                   <Stack direction='row'>
