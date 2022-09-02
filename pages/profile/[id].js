@@ -196,13 +196,13 @@ export default function Profile() {
                 src={profile.coverPicture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
                 objectFit='cover'
                 w='full'
-                h={{ sm: '15rem', md: '20rem' }}
+                h={{ base: '15rem', md: '20rem' }}
             />
         ) : (
             <Box
                 bg={profile.color}
                 w='full'
-                h={{ sm: '10rem', md: '15rem' }}
+                h={{ base: '10rem', md: '15rem' }}
             />
         )
       }
@@ -216,7 +216,7 @@ export default function Profile() {
                       w={{ base: '10rem', md: '15rem' }}
                       h={{ base: '10rem', md: '15rem' }}
                       borderRadius='xl'
-                      ml={{ base: 6, md: '4rem'}}
+                      ml={{ base: 0, md: '4rem'}}
                       mt={{ base: '-2rem', md: '-4rem'}}
                   />
                 ) : (
