@@ -3,31 +3,37 @@ import {RadioGroup} from '@headlessui/react'
 import {Badge, Button} from "@chakra-ui/react";
 import {Dialog, Transition} from "@headlessui/react";
 import { XIcon, CheckCircleIcon } from '@heroicons/react/solid'
+import {AddIcon} from "@chakra-ui/icons";
 
 const plans = [
     {
+        id: 1,
         name: 'Best Collector',
-        desription: ''
+        description: 'Chose your n°1 collector'
     },
     {
+        id: 2,
         name: 'Best Commentary',
-        description: ''
+        description: 'Chose your n°1 commentary'
     },
     {
+        id: 3,
         name: 'x Followers',
-        description: ''
+        description: 'Chose an amount of random followers'
     },
     {
+        id: 4,
         name: 'x Collectors',
-        description: ''
+        description: 'Chose an amount of random collectors'
     },
     {
+        id: 5,
         name: 'x Commentary',
-        description: ''
+        description: 'Chose an amount of random commentaries'
     }
 ]
 
-export default class GiveawayRadioGroup extends Component {
+export default class ModuleSelector extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -44,6 +50,7 @@ export default class GiveawayRadioGroup extends Component {
     }
 
     handleSelect = (item) => {
+        this.setState({ isOpen: false })
         this.props.onSelect(item)
     }
 
@@ -60,12 +67,12 @@ export default class GiveawayRadioGroup extends Component {
                     >{this.props.selected.name}</Badge>
                 ) : (
                     <Button variant="Ghost" onClick={this.openModal}>
-                        Plus
+                        <AddIcon />
                     </Button>
                 )
                 }
                 <Transition appear show={this.state.isOpen} as={Fragment}>
-                    <Dialog as="div" className="relative z-10" onClose={this.closeModal}>
+                    <Dialog as="div" className="relative z-30" onClose={this.closeModal}>
                         <Transition.Child
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -112,12 +119,12 @@ export default class GiveawayRadioGroup extends Component {
                                                                 className={({active, checked}) =>
                                                                     `${
                                                                         active
-                                                                            ? 'ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-teal-300'
+                                                                            ? ''
                                                                             : ''
                                                                     }
                   ${
-                                                                        checked ? 'bg-teal-700 bg-opacity-75 text-white' : 'bg-white dark:bg-gray-800'
-                                                                    } relative flex cursor-pointer rounded-lg px-5 py-4 border border-gray-300 focus:outline-none`
+                                                                        checked ? 'text-gray-900' : 'bg-white dark:bg-gray-800'
+                                                                    } relative flex cursor-pointer rounded-lg px-5 py-4 border border-gray-500 focus:outline-none`
                                                                 }
                                                             >
                                                                 {({active, checked}) => (
@@ -128,24 +135,22 @@ export default class GiveawayRadioGroup extends Component {
                                                                                 <div className="text-sm">
                                                                                     <RadioGroup.Label
                                                                                         as="p"
-                                                                                        className={`font-medium  ${
-                                                                                            checked ? 'text-white' : 'text-gray-900 dark:text-white'
+                                                                                        className={`font-semibold  ${
+                                                                                            checked ? 'text-gray-900 dark:text-white' : 'text-gray-900 dark:text-white'
                                                                                         }`}
                                                                                     >
                                                                                         {plan.name}
                                                                                     </RadioGroup.Label>
                                                                                     <RadioGroup.Description
                                                                                         as="span"
-                                                                                        className={`inline ${
-                                                                                            checked ? 'text-sky-100' : 'text-gray-500'
-                                                                                        }`}
+                                                                                        className='inline text-gray-500'
                                                                                     >
                                                                                         <span>{plan.description}</span>
                                                                                     </RadioGroup.Description>
                                                                                 </div>
                                                                             </div>
                                                                             {checked && (
-                                                                                <div className="shrink-0 text-white">
+                                                                                <div className="shrink-0 text-teal-500">
                                                                                     <CheckCircleIcon className="h-6 w-6"/>
                                                                                 </div>
                                                                             )}

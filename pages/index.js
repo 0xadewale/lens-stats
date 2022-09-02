@@ -33,9 +33,7 @@ const typeMap = {
 export default function Home() {
   const [stats, setStats] = useState([])
   const [loadingState, setLoadingState] = useState('loading')
-  const [searchString, setSearchString] = useState('')
   const { profile } = useContext(AppContext)
-  const [metamask, setMetamask] = useState(true)
 
   useEffect(() => {
     fetchStats()
@@ -47,6 +45,7 @@ export default function Home() {
       console.log(response)
       const stats = response.data.globalProtocolStats
       setStats(stats)
+      console.log(stats)
       setLoadingState('loaded')
     } catch (error) {
       console.log({ error })
@@ -58,29 +57,6 @@ export default function Home() {
     let parts = float.toString().split(".")
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ")
     return parts.join(".").replace('.000', '')
-  }
-
-  async function searchForPost() {
-    setLoadingState('')
-    try {
-      const urqlClient = await createClient()
-      const response = await urqlClient.query(searchPublications, {
-        query: searchString, type: 'PUBLICATION'
-      }).toPromise()
-      const postData = response.data.search.items.filter(post => {
-        if (post.profile) {
-          post.backgroundColor = generateRandomColor()
-          return post
-        }
-      })
-
-      setPosts(postData)
-      if (!postData.length) {
-        setLoadingState('no-results')
-      }
-    } catch (error) {
-      console.log({ error })
-    }
   }
 
   return (
