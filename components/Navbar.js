@@ -108,7 +108,9 @@ export function Navbar({
                       </MenuButton>
                       <MenuList>
                         <MenuItem>
-                          My Profile
+                          <Link href={'/profile/' + profile.id}>
+                            My Stats
+                          </Link>
                         </MenuItem>
                       </MenuList>
                     </Menu>
