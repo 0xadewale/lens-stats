@@ -127,7 +127,7 @@ export default function Home() {
                   <Table variant='simple'>
                     <Thead>
                       <Tr>
-                        <Th colspan={3}>Total Revenue</Th>
+                        <Th colSpan={3}>Total Revenue</Th>
                       </Tr>
                     </Thead>
                     <Tbody>

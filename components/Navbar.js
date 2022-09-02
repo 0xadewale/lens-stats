@@ -15,6 +15,7 @@ import {
 export function Navbar({
     connected,
     profile,
+    metamask,
     signIn
 }) {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -56,6 +57,13 @@ export function Navbar({
               {colorMode === 'light' ? <MoonIcon /> : <SunIcon /> }
             </Button>
             {
+              !metamask && (
+                  <Badge p={1} fontSize="0.6rem" ml={2} mr={4} colorScheme='orange' borderRadius='md'>
+                    No Metamask
+                  </Badge>
+              )
+            }
+            {
                 connected && profile && (
                     <Menu>
                       <MenuButton>
@@ -78,7 +86,7 @@ export function Navbar({
                 )
             }
             {
-                !connected && (
+                !connected && metamask && (
                     <div>
                       <Box pr={4} pl={2}>
                         <Button colorScheme="teal" onClick={signIn}>Login</Button>
@@ -87,10 +95,10 @@ export function Navbar({
                 )
             }
             {
-              connected && !profile && (
-                  <Badge p={1} fontSize="0.6rem" mr={4} colorScheme='teal'>
-                    No Lens profile
-                  </Badge>
+                connected && !profile && (
+                    <Badge p={1} fontSize="0.6rem" ml={2} mr={4} colorScheme='teal' borderRadius='md'>
+                      No Lens profile
+                    </Badge>
                 )
             }
           </Flex>
