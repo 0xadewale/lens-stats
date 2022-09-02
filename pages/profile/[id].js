@@ -4,8 +4,9 @@ import {
   createClient,
   fetchProfile,
   doesFollow as doesFollowQuery,
+  getPublications,
   createUnfollowTypedData,
-  LENS_HUB_CONTRACT_ADDRESS,
+  LENS_HUB_CONTRACT_ADDRESS, whoCollectedPublication,
 } from '../../api'
 import { ethers } from 'ethers'
 import { css } from '@emotion/css'
@@ -21,18 +22,21 @@ import {
   Container,
   Flex,
   Heading,
-  Image,
+  Image, Skeleton,
   Spacer,
   Stat, StatArrow, StatGroup, StatHelpText, StatLabel, StatNumber,
   Text,
   useColorModeValue
 } from "@chakra-ui/react";
+import {TopUserCard} from "../../components/TopUserCard";
 
 export default function Profile() {
   const [profile, setProfile] = useState()
   const [publications, setPublications] = useState([])
   const [doesFollow, setDoesFollow] = useState()
   const [loadedState, setLoadedState] = useState('')
+  const [bestCollector, setBestCollector] = useState()
+  const [bestCommentary, setBestCommentary] = useState()
   const router = useRouter()
   const context = useContext(AppContext)
   const { id } = router.query
@@ -40,7 +44,9 @@ export default function Profile() {
 
   useEffect(() => {
     if (id) {
-      getProfile()
+      getProfile().then((res) => {
+        getStats(res)
+      })
     }
     if (id && userAddress) {
       checkDoesFollow()
@@ -76,11 +82,58 @@ export default function Profile() {
         profile: profileData, publications: publicationData
       } = await fetchProfile(id)
       setProfile(profileData)
-      console.log(profileData)
       setPublications(publicationData)
-      setLoadedState('loaded')
+      return publicationData
     } catch (err) {
       console.log('error fetching profile...', err)
+    }
+  }
+
+  async function getStats(pubs) {
+    try {
+      const client = await createClient()
+      let collectors = {}
+      let comments = {}
+      for (const publication of pubs) {
+        const collectorResponse = await client.query(whoCollectedPublication, {
+          request: { publicationId: publication.id }
+        }).toPromise()
+        const items = collectorResponse.data.whoCollectedPublication.items
+        for (let i = 0; i < items.length; i++){
+          collectors[items[i].defaultProfile?.id] ?
+              collectors[items[i].defaultProfile?.id].collects.push(publication) :
+              collectors[items[i].defaultProfile?.id] = { collects: [publication], defaultProfile: items[i].defaultProfile }
+        }
+        const commentsResponse = await getComments(publication.id)
+        for (let i = 0; i < commentsResponse.length; i++){
+          comments[commentsResponse[i].profile?.id] ?
+              comments[commentsResponse[i].profile?.id].comments.push(publication) :
+              comments[commentsResponse[i].profile?.id] = { comments: [publication], profile: commentsResponse[i].profile }
+        }
+      }
+      delete collectors['undefined']
+      let array = Object.keys(collectors).map((key) => {
+        return collectors[key]
+      })
+      if (array.length > 0) {
+        let best = array.reduce((prev, current) => (prev.collects.length > current.collects.length) ? prev : current)
+        setBestCollector(best.defaultProfile)
+      } else {
+        setBestCollector(null)
+      }
+      delete comments['undefined']
+      array = Object.keys(comments).map((key) => {
+        return comments[key]
+      })
+      if (array.length > 0) {
+        let best = array.reduce((prev, current) => (prev.comments.length > current.comments.length) ? prev : current)
+        setBestCommentary(best.profile)
+      } else {
+        setBestCommentary(null)
+      }
+      setLoadedState('loaded')
+    } catch (err) {
+      console.log('error fetching stats...', err)
     }
   }
 
@@ -119,8 +172,16 @@ export default function Profile() {
     }
   }
 
-  function editProfile() {
-    router.push('/edit-profile')
+  async function getComments(id) {
+    try {
+      const client = await createClient()
+      const comments = await client.query(getPublications, {
+        request: { commentsOf: id }
+      }).toPromise()
+      return comments.data.publications.items
+    } catch (err) {
+      console.log('Error fetching comments...', err)
+    }
   }
 
   if (!profile) return null
@@ -171,10 +232,10 @@ export default function Profile() {
             }
             <Flex w='full' alignItems='center' flexDirection={{ base: 'column', md: 'row'}}>
               <Box p={4}>
-                <Heading fontSize={'2xl'} fontFamily={'body'} mb={4}>
+                <Heading textAlign={{ base: 'center', md: 'left'}} fontSize={'2xl'} fontFamily={'body'} mb={4}>
                   { profile.handle }
                 </Heading>
-                <Flex>
+                <Flex justify='center' textAlign={{ base: 'center', md: 'left'}}>
                   <Box>
                     <Text fontWeight={600}>
                       { profile.stats.totalFollowers }
@@ -201,7 +262,6 @@ export default function Profile() {
                   </Box>
                 </Flex>
               </Box>
-              <Spacer />
               <Box>
                 {
                   userAddress && !profileOwner ? (
@@ -260,103 +320,70 @@ export default function Profile() {
           </StatGroup>
         </Box>
       </Flex>
+      <Flex mt={4}>
+        <Box p={4} w='full'>
+          {
+            loadedState === 'loaded' ? (
+                    <Flex alignItems='center' justify={{ base: 'center', md: 'center'}} flexDirection={{ base: 'column', md: 'row'}}>
+                      {
+                        bestCollector ? (
+                              <TopUserCard label='Top collector' user={bestCollector} />
+                          ) : (
+                              <Box
+                                  h='25rem'
+                                  w='20rem'
+                                  rounded={'md'}
+                                  borderWidth={1}
+                                  borderRadius='lg'
+                                  mx={4}
+                              >
+                                <Center h='full'>
+                                  No Top collector
+                                </Center>
+                              </Box>
+                        )
+                      }
+                      {
+                        bestCommentary ? (
+                              <TopUserCard label='Top commentary' user={bestCommentary} />
+                          ): (
+                            <Box
+                                h='25rem'
+                                w='20rem'
+                                rounded={'md'}
+                                borderWidth={1}
+                                borderRadius='lg'
+                                mx={4}
+                            >
+                              <Center h='full'>
+                                No Top commentary
+                              </Center>
+                            </Box>
+                        )
+                      }
+                    </Flex>
+            ) :
+                <Flex alignItems='center' justify={{ base: 'center', md: 'center'}} flexDirection={{ base: 'column', md: 'row'}}>
+                  <Skeleton
+                      h='25rem'
+                      w='20rem'
+                      rounded={'md'}
+                      borderWidth={1}
+                      borderRadius='lg'
+                      mx={4}
+                  />
+                  <Skeleton
+                      h='25rem'
+                      w='20rem'
+                      rounded={'md'}
+                      borderWidth={1}
+                      borderRadius='lg'
+                      mx={4}
+                  />
+                </Flex>
+          }
+        </Box>
+      </Flex>
     </div>
   )
 }
-
-const bioStyle = css`
-  font-weight: 500;
-`
-
-const emptyPostTextStyle = css`
-  text-align: center;
-  margin: 0;
-`
-
-const emptyPostContainerStyle = css`
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, .15);
-  padding: 25px;
-  border-radius: 8px;
-`
-
-const emptyPostHandleStyle = css`
-  font-weight: 600;
-`
-
-const postHeaderStyle = css`
-  margin: 0px 0px 15px;
-`
-
-const publicationWrapper = css`
-  background-color: white;
-  margin-bottom: 15px;
-  padding: 5px 25px;
-  border-radius: 15px;
-  border: 1px solid #ededed;
-`
-
-const publicationContentStyle = css`
-  line-height: 26px;
-`
-
-const nameStyle = css`
-  margin: 15px 0px 5px;
-`
-
-const handleStyle = css`
-  margin: 0px 0px 5px;
-  color: #b900c9;
-`
-
-const headerStyle = css`
-  width: 900px;
-  max-height: 300px;
-  height: 300px;
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-`
-
-const profileImageStyle = css`
-  width: 200px;
-  height: 200px;
-  max-width: 200px;
-  border: 10px solid white;
-  border-radius: 12px;
-`
-
-const columnWrapperStyle = css`
-  margin-top: 20px;
-  display: flex;
-  flex-direction: row;
-`
-
-const rightColumnStyle = css`
-  margin-left: 20px;
-  flex: 1;
-`
-
-const containerStyle = css`
-  padding-top: 50px;
-`
-
-const buttonStyle = css`
-  border: 2px solid rgb(249, 92, 255);
-  outline: none;
-  margin-top: 15px;
-  color: rgb(249, 92, 255);
-  padding: 13px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all .35s;
-  font-weight: 700;
-  width: 100%;
-  letter-spacing: .75px;
-  &:hover {
-    background-color: rgb(249, 92, 255);
-    color: white;
-  }
-`

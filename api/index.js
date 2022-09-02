@@ -17,7 +17,12 @@ export async function fetchProfile(id) {
     const returnedProfile = await urqlClient.query(getProfiles, { id }).toPromise();
     const profileData = returnedProfile.data.profiles.items[0]
     profileData.color = generateRandomColor()
-    const pubs = await urqlClient.query(getPublications, { id, limit: 50 }).toPromise()
+    const pubs = await urqlClient.query(getPublications, {
+      request: {
+        profileId: id,
+        publicationTypes: ['POST']
+      }
+    }).toPromise()
     return {
       profile: profileData,
       publications: pubs.data.publications.items
@@ -60,7 +65,8 @@ export {
   doesFollow,
   getChallenge,
   timeline,
-  globalProtocolStats
+  globalProtocolStats,
+  whoCollectedPublication
 } from './queries'
 
 export {
