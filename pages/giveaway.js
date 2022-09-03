@@ -1,9 +1,37 @@
-import {Badge, Button, FormControl, FormHelperText, FormLabel, Input, Text} from "@chakra-ui/react";
+import { Badge, Box, Button, FormControl, FormLabel, Image, Text } from "@chakra-ui/react";
 import ModuleSelector from "../components/Giveaway/ModuleSelector";
 import {useContext, useEffect, useState} from "react";
-import BestCollector from "../components/Giveaway/Form/BestCollector";
+import BestModule from "../components/Giveaway/Form/BestModule";
 import {AppContext} from "../context";
 import {createClient, getPublications, getStats} from "../api";
+
+
+const currencies = [
+    {
+        name: "Wrapped Matic",
+        symbol: "WMATIC",
+        decimals: 18,
+        address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
+    },
+    {
+        name: "Wrapped Ether",
+        symbol: "WETH",
+        decimals: 18,
+        address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+    },
+    {
+        name: "(PoS) Dai Stablecoin",
+        symbol: "DAI",
+        decimals: 18,
+        address: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+    },
+    {
+        name: "USD Coin (PoS)",
+        symbol: "USDC",
+        decimals: 6,
+        address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
+    }
+]
 
 export default function Giveaway({signIn}) {
     const [selected, setSelected] = useState();
@@ -24,7 +52,7 @@ export default function Giveaway({signIn}) {
         const client = await createClient()
         const pubs = await client.query(getPublications, {
             request: {
-                profileId: id,
+                profileId: userProfile.id,
                 publicationTypes: ['POST']
             }
         }).toPromise()
@@ -74,13 +102,85 @@ export default function Giveaway({signIn}) {
             <div className="flex my-4">
                 <FormControl>
                     <FormLabel>Module</FormLabel>
-                    <ModuleSelector selected={selected} onSelect={handleSelected} />
+                    <div className="flex items-center gap-2">
+                        {
+                            stats ? (
+                                <ModuleSelector selected={selected} onSelect={handleSelected} />
+                            ) : (
+                                <Button isLoading variant='ghost'>Button</Button>
+                            )
+                        }
+                        {
+                            selected?.id === 1 && stats?.bestCollector && (
+                                <div className="flex gap-2 items-center">
+                                    <div>
+                                        {
+                                            stats.bestCollector.picture && stats.bestCollector.picture.original ? (
+                                                <Image
+                                                    src={stats.bestCollector.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                                                    alt="user profile picture"
+                                                    objectFit="cover"
+                                                    boxSize="2.5rem"
+                                                    borderRadius='full'
+                                                />
+                                            ) : (
+                                                <Box
+                                                    bg='gray.500'
+                                                    boxSize="2.5rem"
+                                                    borderRadius='full'
+                                                />
+                                            )
+                                        }
+                                    </div>
+                                    <div className="font-semibold">{ stats.bestCollector.name }</div>
+                                </div>
+                            )
+                        }
+                        {
+                            selected?.id === 2 && stats?.bestCommentary && (
+                                <div className="flex gap-2 items-center">
+                                    <div>
+                                        {
+                                            stats.bestCommentary.picture && stats.bestCommentary.picture.original ? (
+                                                <Image
+                                                    src={stats.bestCommentary.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                                                    alt="user profile picture"
+                                                    objectFit="cover"
+                                                    boxSize="2.5rem"
+                                                    borderRadius='full'
+                                                />
+                                            ) : (
+                                                <Box
+                                                    bg='gray.500'
+                                                    boxSize="2.5rem"
+                                                    borderRadius='full'
+                                                />
+                                            )
+                                        }
+                                    </div>
+                                    <div className="font-semibold">{ stats.bestCommentary.name }</div>
+                                </div>
+                            )
+                        }
+                    </div>
                 </FormControl>
             </div>
             {(() => {
                 switch (selected?.id) {
                     case 1:
-                        return <BestCollector winner={stats.bestCollector} address={userAddress} />
+                        return <BestModule
+                            label="Best Collector"
+                            winner={stats.bestCollector}
+                            address={userAddress}
+                            currencies={currencies}
+                            />
+                    case 2:
+                        return <BestModule
+                            label="Best Commentary"
+                            winner={stats.bestCommentary}
+                            address={userAddress}
+                            currencies={currencies}
+                            />
                     default:
                         return <div className="text-gray-500">Comming Soon</div>
                 }

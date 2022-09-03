@@ -1,15 +1,6 @@
-import {Component, Fragment, useState} from 'react'
+import {Component, Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
-
-const people = [
-  { name: 'Wade Cooper' },
-  { name: 'Arlene Mccoy' },
-  { name: 'Devon Webb' },
-  { name: 'Tom Cook' },
-  { name: 'Tanya Fox' },
-  { name: 'Hellen Schmidt' },
-]
 
 export default class Select extends Component {
   constructor(props) {
@@ -17,7 +8,6 @@ export default class Select extends Component {
   }
 
   handleSelect = (item) => {
-    console.log('select event')
     this.props.onSelect(item)
   }
 
