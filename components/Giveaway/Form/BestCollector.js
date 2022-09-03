@@ -10,6 +10,7 @@ import {
     NumberInputStepper
 } from "@chakra-ui/react";
 import Select from "../../ui/Select";
+import {ethers, providers} from "ethers";
 
 const currencies = [
     {
@@ -43,18 +44,40 @@ const currencies = [
         address: "0xD838290e877E0188a4A44700463419ED96c16107"
     }
 ]
+import ABI from 'abi/erc20.json'
 
 export default class BestCollector extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedCurrency: null
+            selectedCurrency: null,
+            amount: 0
         }
     }
 
     handleCurrencySelected = (currency) => {
         console.log('form catch', currency)
         this.setState({ selectedCurrency: currency })
+    }
+
+    handleAmountChange = (amount) => {
+        this.setState( { amount })
+    }
+
+    send = async () => {
+        const provider = new providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner()
+        const tokenContract = new ethers.Contract(this.state.selectedCurrency.address, ABI, provider)
+        const name = await tokenContract.name()
+        console.log('Contract name : ' + name)
+
+        if (this.state.selectedCurrency && this.amount > 0) {
+            const tx = {
+                from: this.props.address,
+                to: this.winner.ownedBy,
+                value: this.state.amount
+            }
+        }
     }
 
     render() {
@@ -74,7 +97,7 @@ export default class BestCollector extends Component {
                     </FormControl>
                     <FormControl position='initial'>
                         <FormLabel>Amount</FormLabel>
-                        <Input position='initial' type='number' />
+                        <Input position='initial' type='number' onChange={this.handleAmountChange} />
                     </FormControl>
                 </div>
                 <div className="flex mt-4 z-10">
