@@ -16,20 +16,33 @@ export default class BestModule extends Component {
         this.state = {
             selectedCurrency: null,
             amount: 0,
-            balance: 0
+            balance: 0,
+            valid: true
         }
     }
 
     handleCurrencySelected = async (currency) => {
         this.setState({ selectedCurrency: currency })
-        await this.getAmount(currency)
+        const balance = await this.getBalance(currency)
+        this.validate(this.state.amount, balance)
     }
 
     handleAmountChange = (e) => {
         this.setState( { amount: e.target.value })
+        this.validate(e.target.value, this.state.balance)
     }
 
-    getAmount = async (currency) => {
+    validate = (value, balance) => {
+        if (this.state.selectedCurrency !== null) {
+            if (value > balance) {
+                this.setState({ valid: false })
+            } else {
+                this.setState({ valid: true })
+            }
+        }
+    }
+
+    getBalance = async (currency) => {
         const provider = new providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner()
         const tokenContract = new ethers.Contract(currency.address, ABI, provider)
@@ -38,6 +51,7 @@ export default class BestModule extends Component {
         const ethRes = ethers.utils.formatEther(res)
         const balance = Number.parseFloat(ethRes).toFixed(6)
         this.setState( { balance: balance.toString().replace('.000000', '') })
+        return balance.toString().replace('.000000')
     }
 
     send = async () => {
@@ -89,11 +103,11 @@ export default class BestModule extends Component {
                                 <div className="font-thin text-gray-500">Balance : {this.state.balance}</div>
                             </div>
                         </FormLabel>
-                        <Input position='initial' type='number' onChange={this.handleAmountChange} />
+                        <Input position='initial' isInvalid={!this.state.valid} type='number' onChange={this.handleAmountChange} />
                     </FormControl>
                 </div>
                 <div className="flex mt-4 z-10">
-                    <Button colorScheme='teal' w={{ base: 'full', sm: 'auto' }} onClick={this.send}>Giveaway</Button>
+                    <Button disabled={!this.state.valid} colorScheme='teal' w={{ base: 'full', sm: 'auto' }} onClick={this.send}>Giveaway</Button>
                 </div>
             </div>
         )
