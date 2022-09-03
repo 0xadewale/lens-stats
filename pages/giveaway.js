@@ -166,23 +166,25 @@ export default function Giveaway({signIn}) {
                 </FormControl>
             </div>
             {(() => {
-                switch (selected?.id) {
-                    case 1:
-                        return <BestModule
-                            label="Best Collector"
-                            winner={stats.bestCollector}
-                            address={userAddress}
-                            currencies={currencies}
+                if (selected) {
+                    switch (selected.id) {
+                        case 1:
+                            return <BestModule
+                                label="Best Collector"
+                                winner={stats.bestCollector}
+                                address={userAddress}
+                                currencies={currencies}
                             />
-                    case 2:
-                        return <BestModule
-                            label="Best Commentary"
-                            winner={stats.bestCommentary}
-                            address={userAddress}
-                            currencies={currencies}
+                        case 2:
+                            return <BestModule
+                                label="Best Commentary"
+                                winner={stats.bestCommentary}
+                                address={userAddress}
+                                currencies={currencies}
                             />
-                    default:
-                        return <div className="text-gray-500">Comming Soon</div>
+                        default:
+                            return <div className="text-gray-500">Comming Soon</div>
+                    }
                 }
             })()}
         </div>
