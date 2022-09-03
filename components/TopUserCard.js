@@ -6,9 +6,7 @@ import {
     Text,
     Stack,
     Button,
-    Link,
-    Badge,
-    useColorModeValue, Spacer, Flex,
+    useColorModeValue, Flex,
 } from '@chakra-ui/react';
 
 export function TopUserCard({ user, label }) {

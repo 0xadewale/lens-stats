@@ -6,13 +6,11 @@ import {
   doesFollow as doesFollowQuery,
   getStats,
   createUnfollowTypedData,
-  LENS_HUB_CONTRACT_ADDRESS, whoCollectedPublication,
+  LENS_HUB_CONTRACT_ADDRESS,
 } from '../../api'
 import { ethers } from 'ethers'
-import { css } from '@emotion/css'
 import { AppContext } from '../../context'
 import { getSigner } from '../../utils'
-import ReactMarkdown from 'react-markdown'
 
 import LENSHUB from '../../abi/lenshub.json'
 import {
