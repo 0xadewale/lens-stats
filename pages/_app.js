@@ -102,7 +102,7 @@ function MyApp({ Component, pageProps }) {
                 signIn={signIn}
             />
             <Box pt={4} pb='10rem'>
-              <Component {...pageProps} />
+              <Component {...pageProps} signIn={signIn} />
             </Box>
             <Footer />
           </Box>

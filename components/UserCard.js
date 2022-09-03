@@ -11,7 +11,6 @@ import {
     Text,
     useColorModeValue,
 } from '@chakra-ui/react';
-import {css} from "@emotion/css";
 
 export function UserCard({ user }) {
     return (

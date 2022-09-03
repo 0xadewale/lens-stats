@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import {Badge, IconButton, Image, Menu, MenuButton, MenuItem, MenuList, Show, useColorMode} from '@chakra-ui/react'
+import {Badge, Show, useColorMode} from '@chakra-ui/react'
 import {SunIcon, MoonIcon, HamburgerIcon, CloseIcon} from '@chakra-ui/icons'
 import { useState } from 'react'
 import {

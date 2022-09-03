@@ -1,5 +1,5 @@
 import { createClient as createUrqlClient } from 'urql'
-import { getProfiles, getPublications } from './queries'
+import { getProfiles, getPublications, whoCollectedPublication } from './queries'
 import { refreshAuthToken, generateRandomColor } from '../utils'
 
 export const APIURL = "https://api.lens.dev"
@@ -29,6 +29,72 @@ export async function fetchProfile(id) {
     }
   } catch (err) {
     console.log('error fetching profile...', err)
+  }
+}
+
+export async function getStats(pubs) {
+  try {
+    const client = await createClient()
+    let collectors = {}
+    let comments = {}
+    let bestCollector = {}
+    let bestCommentary = {}
+    for (const publication of pubs) {
+      const collectorResponse = await client.query(whoCollectedPublication, {
+        request: { publicationId: publication.id }
+      }).toPromise()
+      const items = collectorResponse.data.whoCollectedPublication.items
+      for (let i = 0; i < items.length; i++){
+        collectors[items[i].defaultProfile?.id] ?
+            collectors[items[i].defaultProfile?.id].collects.push(publication) :
+            collectors[items[i].defaultProfile?.id] = { collects: [publication], defaultProfile: items[i].defaultProfile }
+      }
+      const commentsResponse = await getComments(publication.id)
+      for (let i = 0; i < commentsResponse.length; i++){
+        comments[commentsResponse[i].profile?.id] ?
+            comments[commentsResponse[i].profile?.id].comments.push(publication) :
+            comments[commentsResponse[i].profile?.id] = { comments: [publication], profile: commentsResponse[i].profile }
+      }
+    }
+    delete collectors['undefined']
+    let array = Object.keys(collectors).map((key) => {
+      return collectors[key]
+    })
+    if (array.length > 0) {
+      let best = array.reduce((prev, current) => (prev.collects.length > current.collects.length) ? prev : current)
+      bestCollector = best.defaultProfile
+    } else {
+      bestCollector = null
+    }
+    delete comments['undefined']
+    array = Object.keys(comments).map((key) => {
+      return comments[key]
+    })
+    if (array.length > 0) {
+      let best = array.reduce((prev, current) => (prev.comments.length > current.comments.length) ? prev : current)
+      bestCommentary = best.profile
+    } else {
+      bestCommentary = null
+    }
+    console.log(bestCommentary)
+    return {
+      bestCollector,
+      bestCommentary
+    }
+  } catch (err) {
+    console.log('error fetching stats...', err)
+  }
+}
+
+async function getComments(id) {
+  try {
+    const client = await createClient()
+    const comments = await client.query(getPublications, {
+      request: { commentsOf: id }
+    }).toPromise()
+    return comments.data.publications.items
+  } catch (err) {
+    console.log('Error fetching comments...', err)
   }
 }
 

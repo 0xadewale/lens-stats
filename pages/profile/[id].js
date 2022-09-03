@@ -4,15 +4,13 @@ import {
   createClient,
   fetchProfile,
   doesFollow as doesFollowQuery,
-  getPublications,
+  getStats,
   createUnfollowTypedData,
-  LENS_HUB_CONTRACT_ADDRESS, whoCollectedPublication,
+  LENS_HUB_CONTRACT_ADDRESS,
 } from '../../api'
 import { ethers } from 'ethers'
-import { css } from '@emotion/css'
 import { AppContext } from '../../context'
 import { getSigner } from '../../utils'
-import ReactMarkdown from 'react-markdown'
 
 import LENSHUB from '../../abi/lenshub.json'
 import {
@@ -45,7 +43,7 @@ export default function Profile() {
   useEffect(() => {
     if (id) {
       getProfile().then((res) => {
-        getStats(res)
+        getUserStats(res)
       })
     }
     if (id && userAddress) {
@@ -89,48 +87,11 @@ export default function Profile() {
     }
   }
 
-  async function getStats(pubs) {
+  async function getUserStats(pubs) {
     try {
-      const client = await createClient()
-      let collectors = {}
-      let comments = {}
-      for (const publication of pubs) {
-        const collectorResponse = await client.query(whoCollectedPublication, {
-          request: { publicationId: publication.id }
-        }).toPromise()
-        const items = collectorResponse.data.whoCollectedPublication.items
-        for (let i = 0; i < items.length; i++){
-          collectors[items[i].defaultProfile?.id] ?
-              collectors[items[i].defaultProfile?.id].collects.push(publication) :
-              collectors[items[i].defaultProfile?.id] = { collects: [publication], defaultProfile: items[i].defaultProfile }
-        }
-        const commentsResponse = await getComments(publication.id)
-        for (let i = 0; i < commentsResponse.length; i++){
-          comments[commentsResponse[i].profile?.id] ?
-              comments[commentsResponse[i].profile?.id].comments.push(publication) :
-              comments[commentsResponse[i].profile?.id] = { comments: [publication], profile: commentsResponse[i].profile }
-        }
-      }
-      delete collectors['undefined']
-      let array = Object.keys(collectors).map((key) => {
-        return collectors[key]
-      })
-      if (array.length > 0) {
-        let best = array.reduce((prev, current) => (prev.collects.length > current.collects.length) ? prev : current)
-        setBestCollector(best.defaultProfile)
-      } else {
-        setBestCollector(null)
-      }
-      delete comments['undefined']
-      array = Object.keys(comments).map((key) => {
-        return comments[key]
-      })
-      if (array.length > 0) {
-        let best = array.reduce((prev, current) => (prev.comments.length > current.comments.length) ? prev : current)
-        setBestCommentary(best.profile)
-      } else {
-        setBestCommentary(null)
-      }
+      let stats = await getStats(pubs)
+      setBestCollector(stats.bestCollector)
+      setBestCommentary(stats.bestCommentary)
       setLoadedState('loaded')
     } catch (err) {
       console.log('error fetching stats...', err)
@@ -169,18 +130,6 @@ export default function Profile() {
       console.log(`successfully followed ... ${profile.handle}`)
     } catch (err) {
       console.log('error: ', err)
-    }
-  }
-
-  async function getComments(id) {
-    try {
-      const client = await createClient()
-      const comments = await client.query(getPublications, {
-        request: { commentsOf: id }
-      }).toPromise()
-      return comments.data.publications.items
-    } catch (err) {
-      console.log('Error fetching comments...', err)
     }
   }
 
