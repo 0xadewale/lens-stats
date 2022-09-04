@@ -48,6 +48,7 @@ function MyApp({ Component, pageProps }) {
       const response = await urqlClient.query(getDefaultProfile, {
         address
       }).toPromise()
+      console.log('user profile :', response.data)
       setUserProfile(response.data.defaultProfile)
     } catch (err) {
       console.log('error fetching user profile...: ', err)
@@ -65,6 +66,7 @@ function MyApp({ Component, pageProps }) {
       const accounts = await window.ethereum.send(
         "eth_requestAccounts"
       )
+      setConnected(true)
       const account = accounts.result[0]
       setUserAddress(account)
       const urqlClient = await createClient()

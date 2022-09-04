@@ -34,7 +34,7 @@ export default function Profile() {
   const [doesFollow, setDoesFollow] = useState()
   const [loadedState, setLoadedState] = useState('')
   const [bestCollector, setBestCollector] = useState()
-  const [bestCommentary, setBestCommentary] = useState()
+  const [bestCommentator, setBestCommentator] = useState()
   const router = useRouter()
   const context = useContext(AppContext)
   const { id } = router.query
@@ -91,7 +91,7 @@ export default function Profile() {
     try {
       let stats = await getStats(pubs)
       setBestCollector(stats.bestCollector)
-      setBestCommentary(stats.bestCommentary)
+      setBestCommentator(stats.bestCommentator)
       setLoadedState('loaded')
     } catch (err) {
       console.log('error fetching stats...', err)
@@ -294,8 +294,8 @@ export default function Profile() {
                         )
                       }
                       {
-                        bestCommentary ? (
-                              <TopUserCard label='Top commentary' user={bestCommentary} />
+                        bestCommentator ? (
+                              <TopUserCard label='Top commentator' user={bestCommentator} />
                           ): (
                             <Box
                                 h='26rem'
@@ -307,7 +307,7 @@ export default function Profile() {
                                 py={6}
                             >
                               <Center h='full'>
-                                No Top commentary
+                                No Top commentator
                               </Center>
                             </Box>
                         )

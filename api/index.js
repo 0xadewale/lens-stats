@@ -1,6 +1,8 @@
 import { createClient as createUrqlClient } from 'urql'
 import { getProfiles, getPublications, whoCollectedPublication } from './queries'
 import { refreshAuthToken, generateRandomColor } from '../utils'
+import { ethers, providers } from 'ethers'
+import ABI from '../abi/erc20.json'
 
 export const APIURL = "https://api.lens.dev"
 export const STORAGE_KEY = "LH_STORAGE_KEY"
@@ -38,7 +40,7 @@ export async function getStats(pubs) {
     let collectors = {}
     let comments = {}
     let bestCollector = {}
-    let bestCommentary = {}
+    let bestCommentator = {}
     for (const publication of pubs) {
       const collectorResponse = await client.query(whoCollectedPublication, {
         request: { publicationId: publication.id }
@@ -72,14 +74,14 @@ export async function getStats(pubs) {
     })
     if (array.length > 0) {
       let best = array.reduce((prev, current) => (prev.comments.length > current.comments.length) ? prev : current)
-      bestCommentary = best.profile
+      bestCommentator = best.profile
     } else {
-      bestCommentary = null
+      bestCommentator = null
     }
-    console.log(bestCommentary)
+    console.log(bestCommentator)
     return {
       bestCollector,
-      bestCommentary
+      bestCommentator: bestCommentator
     }
   } catch (err) {
     console.log('error fetching stats...', err)
@@ -117,6 +119,33 @@ export async function createClient() {
     }
   } else {
     return basicClient
+  }
+}
+
+export async function getBalance(currency, address) {
+  const provider = new providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner()
+  const tokenContract = new ethers.Contract(currency.address, ABI, provider)
+  const contractWithSigner = await tokenContract.connect(signer)
+  const res = await contractWithSigner.balanceOf(address)
+  const ethRes = ethers.utils.formatEther(res)
+  const balance = Number.parseFloat(ethRes).toFixed(6)
+  return balance.toString().replace('.000000', '')
+}
+
+export async function send(to, amount, currency) {
+  const provider = new providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner()
+  const tokenContract = new ethers.Contract(currency.address, ABI, provider)
+
+  const parsedAmount = ethers.utils.parseUnits(amount, currency.decimals)
+  const contractWithSigner = await tokenContract.connect(signer)
+
+  try {
+    let tx = await contractWithSigner.transfer(to, parsedAmount)
+    await tx.wait()
+  } catch (e) {
+    console.log(e)
   }
 }
 

@@ -4,6 +4,7 @@ import {useContext, useEffect, useState} from "react";
 import BestModule from "../components/Giveaway/Form/BestModule";
 import {AppContext} from "../context";
 import {createClient, getPublications, getStats} from "../api";
+import PostCollectorModule from "../components/Giveaway/Form/PostCollectorModule";
 
 
 const currencies = [
@@ -37,13 +38,12 @@ export default function Giveaway({signIn}) {
     const [selected, setSelected] = useState();
     const [stats, setStats] = useState()
     const [loadedState, setLoadedState] = useState('')
+    const [publications, setPublications] = useState([])
     const context = useContext(AppContext)
     const { userAddress, profile: userProfile } = context
 
     useEffect(() => {
         if (userAddress && userProfile) {
-            console.log('address', userAddress)
-            console.log('profile', userProfile)
             getUserStats()
         }
     }, [userAddress, userProfile])
@@ -56,6 +56,8 @@ export default function Giveaway({signIn}) {
                 publicationTypes: ['POST']
             }
         }).toPromise()
+        setPublications(pubs.data.publications.items)
+        console.log(pubs.data.publications.items)
         const stats = await getStats(pubs.data.publications.items)
         setStats(stats)
         setLoadedState('loaded')
@@ -88,7 +90,7 @@ export default function Giveaway({signIn}) {
                     <Badge fontSize="0.6rem" mr={2} p={2} colorScheme='teal' borderRadius='md'>
                         No Lens profile
                     </Badge>
-                    { userAddress }
+                    Sorry you need a Lens profile
                 </div>
             </div>
         )
@@ -137,13 +139,13 @@ export default function Giveaway({signIn}) {
                             )
                         }
                         {
-                            selected?.id === 2 && stats?.bestCommentary && (
+                            selected?.id === 2 && stats?.bestCommentator && (
                                 <div className="flex gap-2 items-center">
                                     <div>
                                         {
-                                            stats.bestCommentary.picture && stats.bestCommentary.picture.original ? (
+                                            stats.bestCommentator.picture && stats.bestCommentator.picture.original ? (
                                                 <Image
-                                                    src={stats.bestCommentary.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                                                    src={stats.bestCommentator.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
                                                     alt="user profile picture"
                                                     objectFit="cover"
                                                     boxSize="2.5rem"
@@ -158,7 +160,7 @@ export default function Giveaway({signIn}) {
                                             )
                                         }
                                     </div>
-                                    <div className="font-semibold">{ stats.bestCommentary.name }</div>
+                                    <div className="font-semibold">{ stats.bestCommentator.name }</div>
                                 </div>
                             )
                         }
@@ -170,18 +172,26 @@ export default function Giveaway({signIn}) {
                     switch (selected.id) {
                         case 1:
                             return <BestModule
-                                label="Best Collector"
+                                label={selected.name}
                                 winner={stats.bestCollector}
                                 address={userAddress}
                                 currencies={currencies}
                             />
                         case 2:
                             return <BestModule
-                                label="Best Commentary"
-                                winner={stats.bestCommentary}
+                                label={selected.name}
+                                winner={stats.bestCommentator}
                                 address={userAddress}
                                 currencies={currencies}
-                            />
+                                />
+                        case 3:
+                            return <PostCollectorModule
+                                label={selected.name}
+                                publications={publications}
+                                address={userAddress}
+                                currencies={currencies}
+                                profile={userProfile}
+                                />
                         default:
                             return <div className="text-gray-500">Comming Soon</div>
                     }
