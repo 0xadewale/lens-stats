@@ -9,12 +9,14 @@ import Select from "../../ui/Select";
 import {ethers, providers} from "ethers";
 
 import ABI from '../../../abi/erc20.json'
+import PostSelector from '../PostSelector'
 
 export default class PostCollectorModule extends Component {
     constructor(props) {
         super(props);
         this.state = {
             selectedCurrency: null,
+            selectedPost: null,
             amount: 0,
             balance: 0,
             winner: null
@@ -24,6 +26,10 @@ export default class PostCollectorModule extends Component {
     handleCurrencySelected = async (currency) => {
         this.setState({ selectedCurrency: currency })
         await this.getAmount(currency)
+    }
+
+    handlePostSelected = async (post) => {
+        this.setState({ selectedPost: post })
     }
 
     handleAmountChange = (e) => {
@@ -65,6 +71,14 @@ export default class PostCollectorModule extends Component {
     render() {
         return (
             <div>
+                <div className="flex w-full my-4">
+                    <PostSelector
+                        posts={this.props.publications}
+                        selected={this.state.selectedPost}
+                        onSelect={this.handlePostSelected}
+                        profile={this.props.profile}
+                    />
+                </div>
                 <div className="flex flex-col md:flex-row my-4 gap-4">
                     <FormControl className="z-20">
                         <FormLabel className="font-semibold">Currency</FormLabel>

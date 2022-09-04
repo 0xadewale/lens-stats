@@ -44,8 +44,6 @@ export default function Giveaway({signIn}) {
 
     useEffect(() => {
         if (userAddress && userProfile) {
-            console.log('address', userAddress)
-            console.log('profile', userProfile)
             getUserStats()
         }
     }, [userAddress, userProfile])
@@ -59,6 +57,7 @@ export default function Giveaway({signIn}) {
             }
         }).toPromise()
         setPublications(pubs.data.publications.items)
+        console.log(pubs.data.publications.items)
         const stats = await getStats(pubs.data.publications.items)
         setStats(stats)
         setLoadedState('loaded')
@@ -191,6 +190,7 @@ export default function Giveaway({signIn}) {
                                 publications={publications}
                                 address={userAddress}
                                 currencies={currencies}
+                                profile={userProfile}
                                 />
                         default:
                             return <div className="text-gray-500">Comming Soon</div>

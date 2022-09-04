@@ -19,7 +19,7 @@ const plans = [
     {
         id: 3,
         name: 'Random Post collector',
-        description: 'Reward a random post post collector '
+        description: 'Chose a best and reward his best collector '
     },
     {
         id: 4,
