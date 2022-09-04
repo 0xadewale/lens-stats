@@ -169,30 +169,32 @@ export default function Giveaway({signIn}) {
                 </FormControl>
             </div>
             {(() => {
-                switch (selected?.id) {
-                    case 1:
-                        return <BestModule
-                            label={selected.name}
-                            winner={stats.bestCollector}
-                            address={userAddress}
-                            currencies={currencies}
+                if (selected) {
+                    switch (selected.id) {
+                        case 1:
+                            return <BestModule
+                                label={selected.name}
+                                winner={stats.bestCollector}
+                                address={userAddress}
+                                currencies={currencies}
                             />
-                    case 2:
-                        return <BestModule
-                            label={selected.name}
-                            winner={stats.bestCommentator}
-                            address={userAddress}
-                            currencies={currencies}
-                            />
-                    case 3:
-                        return <PostCollectorModule
-                            label={selected.name}
-                            publications={publications}
-                            address={userAddress}
-                            currencies={currencies}
-                            />
-                    default:
-                        return <div className="text-gray-500">Comming Soon</div>
+                        case 2:
+                            return <BestModule
+                                label={selected.name}
+                                winner={stats.bestCommentator}
+                                address={userAddress}
+                                currencies={currencies}
+                                />
+                        case 3:
+                            return <PostCollectorModule
+                                label={selected.name}
+                                publications={publications}
+                                address={userAddress}
+                                currencies={currencies}
+                                />
+                        default:
+                            return <div className="text-gray-500">Comming Soon</div>
+                    }
                 }
             })()}
         </div>
