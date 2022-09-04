@@ -108,32 +108,33 @@ export function Navbar({
               {colorMode === 'light' ? <MoonIcon /> : <SunIcon /> }
             </Button>
             {
-              !metamask && (
-                    <Badge p={1} fontSize="0.6rem" mr={4} colorScheme='orange' borderRadius='md'>
-                      No Web3 provider
-                    </Badge>
+              metamask ? (
+                  <div>
+                    {
+                      connected ? (
+                          <div>
+                            {
+                                profile ? (
+                                    <AccountDropdown profile={profile} />
+                                ) : (
+                                    <Badge p={1} fontSize="0.6rem" mr={4} colorScheme='teal' borderRadius='md'>
+                                      No Lens profile
+                                    </Badge>
+                                )
+                            }
+                          </div>
+                      ) : (
+                            <Box pr={4}>
+                              <Button colorScheme="teal" onClick={signIn}>Login</Button>
+                            </Box>
+                        )
+                    }
+                  </div>
+              ) : (
+                  <Badge p={1} fontSize="0.6rem" mr={4} colorScheme='orange' borderRadius='md'>
+                    No Web3 provider
+                  </Badge>
               )
-            }
-            {
-                connected && profile && (
-                    <AccountDropdown profile={profile} />
-                )
-            }
-            {
-                !connected && metamask && (
-                    <div>
-                      <Box pr={4}>
-                        <Button colorScheme="teal" onClick={signIn}>Login</Button>
-                      </Box>
-                    </div>
-                )
-            }
-            {
-                connected && !profile && (
-                    <Badge p={1} fontSize="0.6rem" mr={4} colorScheme='teal' borderRadius='md'>
-                      No Lens profile
-                    </Badge>
-                )
             }
           </Flex>
         </nav>

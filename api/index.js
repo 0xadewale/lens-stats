@@ -38,7 +38,7 @@ export async function getStats(pubs) {
     let collectors = {}
     let comments = {}
     let bestCollector = {}
-    let bestCommentary = {}
+    let bestCommentator = {}
     for (const publication of pubs) {
       const collectorResponse = await client.query(whoCollectedPublication, {
         request: { publicationId: publication.id }
@@ -72,14 +72,14 @@ export async function getStats(pubs) {
     })
     if (array.length > 0) {
       let best = array.reduce((prev, current) => (prev.comments.length > current.comments.length) ? prev : current)
-      bestCommentary = best.profile
+      bestCommentator = best.profile
     } else {
-      bestCommentary = null
+      bestCommentator = null
     }
-    console.log(bestCommentary)
+    console.log(bestCommentator)
     return {
       bestCollector,
-      bestCommentary
+      bestCommentator: bestCommentator
     }
   } catch (err) {
     console.log('error fetching stats...', err)

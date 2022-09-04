@@ -9,27 +9,32 @@ const plans = [
     {
         id: 1,
         name: 'Best Collector',
-        description: 'Chose your n°1 collector'
+        description: 'Reward your n°1 collector'
     },
     {
         id: 2,
-        name: 'Best Commentary',
-        description: 'Chose your n°1 commentary'
+        name: 'Best Commentator',
+        description: 'Reward your n°1 commentary'
     },
     {
         id: 3,
-        name: 'x Followers',
-        description: 'Chose an amount of random followers'
+        name: 'Random Post collector',
+        description: 'Reward a random post post collector '
     },
     {
         id: 4,
-        name: 'x Collectors',
-        description: 'Chose an amount of random collectors'
+        name: 'x Followers',
+        description: 'Reward an amount of random followers'
     },
     {
         id: 5,
+        name: 'x Collectors',
+        description: 'Reward an amount of random collectors'
+    },
+    {
+        id: 6,
         name: 'x Commentary',
-        description: 'Chose an amount of random commentaries'
+        description: 'Reward an amount of random commentaries'
     }
 ]
 
