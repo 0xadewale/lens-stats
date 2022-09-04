@@ -1,17 +1,17 @@
 import {Component} from "react";
 import {
     Box,
-    Button,
+    Button, Center, Flex,
     FormControl,
-    FormLabel, Image,
-    Input
+    FormLabel, Heading, Image,
+    Input, Show, Spinner, Stack, Text, useColorModeValue
 } from "@chakra-ui/react";
 import Select from "../../ui/Select";
 import {ethers, providers} from "ethers";
 
 import ABI from '../../../abi/erc20.json'
 import PostSelector from '../PostSelector'
-import { createClient, whoCollectedPublication } from '../../../api'
+import { createClient, getBalance, send, whoCollectedPublication } from '../../../api'
 import DataTable from 'react-data-table-component'
 
 const columns = [
@@ -47,6 +47,10 @@ const columns = [
                 <div className="font-thin text-gray-500">{row.defaultProfile.handle}</div>
             </div>
         </div>
+    },
+    {
+        name: 'Address',
+        selector: row => row.defaultProfile.ownedBy
     }
 ]
 
@@ -56,22 +60,37 @@ export default class PostCollectorModule extends Component {
         this.state = {
             selectedCurrency: null,
             selectedPost: null,
+            loadingState: '',
             amount: 0,
             balance: 0,
             entries: [],
-            winner: null
+            winner: undefined,
+            valid: false
         }
     }
 
     handleCurrencySelected = async (currency) => {
         this.setState({ selectedCurrency: currency })
-        await this.getAmount(currency)
+        const balance = await getBalance(currency, this.props.address)
+        this.setState( { balance: balance })
+        this.validate(this.state.amount, balance)
     }
 
     handlePostSelected = async (post) => {
-        this.setState({ selectedPost: post })
+        this.setState({ selectedPost: post, loadingState: 'loading' })
         const collectors = await this.getWhoCollectedPublication(post)
-        this.setState({ entries: collectors })
+        this.setState({ entries: collectors, winner: undefined })
+        this.setState({ loadingState: 'loaded' })
+    }
+
+    validate = (value, balance) => {
+        if (this.state.selectedCurrency !== null) {
+            if (value > balance) {
+                this.setState({ valid: false })
+            } else {
+                this.setState({ valid: true })
+            }
+        }
     }
 
     getWhoCollectedPublication = async (pub) => {
@@ -80,8 +99,7 @@ export default class PostCollectorModule extends Component {
         let total = 0
 
         let response = await client.query(whoCollectedPublication, {
-            // request: { publicationId: pub.id }
-            request: { publicationId: '0x05-0x015e' }
+            request: { publicationId: pub.id }
         }).toPromise()
 
         entries = response.data.whoCollectedPublication.items
@@ -90,9 +108,8 @@ export default class PostCollectorModule extends Component {
 
         while (entries.length < total) {
             let response = await client.query(whoCollectedPublication, {
-                // request: { publicationId: pub.id }
                 request: {
-                    publicationId: '0x05-0x015e',
+                    publicationId: pub.id,
                     cursor
                 }
             }).toPromise()
@@ -102,40 +119,20 @@ export default class PostCollectorModule extends Component {
         return entries.filter(x => x.defaultProfile !== null)
     }
 
+    draw = () => {
+        const entries = ethers.utils.shuffled(this.state.entries)
+        const random = Math.random() * (0 - entries.length) + entries.length
+        const index = Math.floor(random)
+        this.setState({ winner: entries[index].defaultProfile })
+    }
+
     handleAmountChange = (e) => {
         this.setState( { amount: e.target.value })
+        this.validate(e.target.value, this.state.balance)
     }
 
-    getAmount = async (currency) => {
-        const provider = new providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner()
-        const tokenContract = new ethers.Contract(currency.address, ABI, provider)
-        const contractWithSigner = await tokenContract.connect(signer)
-        const res = await contractWithSigner.balanceOf(this.props.address)
-        const ethRes = ethers.utils.formatEther(res)
-        const balance = Number.parseFloat(ethRes).toFixed(6)
-        this.setState( { balance: balance.toString().replace('.000000', '') })
-    }
-
-    send = async () => {
-        const provider = new providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner()
-        const tokenContract = new ethers.Contract(this.state.selectedCurrency.address, ABI, provider)
-
-        const amount = ethers.utils.parseUnits(this.state.amount, this.state.selectedCurrency.decimals)
-        console.log(amount.toString())
-        const contractWithSigner = await tokenContract.connect(signer)
-
-        try {
-            let tx = await contractWithSigner.transfer(winner, amount)
-            console.log(tx)
-            await tx.wait()
-        } catch (e) {
-            console.log(e)
-        }
-
-        if (this.state.selectedCurrency && this.amount > 0) {
-        }
+    handleSend = async () => {
+        await send(this.state.winner.ownedBy, this.state.amount, this.state.selectedCurrency)
     }
 
     render() {
@@ -160,7 +157,7 @@ export default class PostCollectorModule extends Component {
                                 <div className="font-thin text-gray-500">Balance : {this.state.balance}</div>
                             </div>
                         </FormLabel>
-                        <Input position='initial' type='number' onChange={this.handleAmountChange} />
+                        <Input position='initial' isInvalid={!this.state.valid} type='number' onChange={this.handleAmountChange} />
                     </FormControl>
                 </div>
                 <div className="flex w-full my-4">
@@ -173,24 +170,115 @@ export default class PostCollectorModule extends Component {
                     />
                 </div>
                 {
-                    this.state.entries.length > 0 && (
-                        <div className="flex my-4">
-                            <FormControl>
-                                <FormLabel>Entries</FormLabel>
-                                <div className="mx-2">
-                                    <DataTable
-                                        columns={columns}
-                                        data={this.state.entries}
-                                        pagination
-                                        theme='dark'
-                                    />
-                                </div>
-                            </FormControl>
+                    this.state.loadingState === 'loaded' && (
+                        <div>
+                            {
+                                this.state.entries.length > 0 && !this.state.winner && (
+                                    <div className="flex my-4">
+                                        <FormControl>
+                                            <FormLabel>Collectors</FormLabel>
+                                            <div>
+                                                <DataTable
+                                                    columns={columns}
+                                                    data={this.state.entries}
+                                                    pagination
+                                                    paginationComponentOptions={{
+                                                        noRowsPerPage: true
+                                                    }}
+                                                    theme='dark'
+                                                />
+                                            </div>
+                                        </FormControl>
+                                    </div>
+                                )
+                            }
                         </div>
                     )
                 }
+                {
+                    this.state.loadingState === 'loading' && (
+                        <div>
+                            <Spinner color="teal" size='lg' />
+                        </div>
+                    )
+                }
+                {
+                    this.state.loadingState === 'loaded' && this.state.entries.length === 0 && (
+                        <div>No collect on this post</div>
+                    )
+                }
                 <div className="flex mt-4 z-10">
-                    <Button colorScheme='teal' w={{ base: 'full', sm: 'auto' }} onClick={this.send}>Giveaway</Button>
+                    {
+                        this.state.winner ? (
+                            <div className="border-2 bg-white w-full dark:bg-gray-900 border-green-600 rounded-xl shadow-md p-4">
+                                <div className="flex justify-center md:justify-between md:items-center gap-2">
+                                    {
+                                        this.state.winner.picture && this.state.winner.picture.original ? (
+                                            <div className="flex flex-col items-center md:flex-row text-center justify-center md:justify-between  gap-2">
+                                                <Image
+                                                    objectFit="cover"
+                                                    boxSize="6rem"
+                                                    borderRadius='full'
+                                                    src={this.state.winner.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                                                />
+                                                <div className="flex flex-col">
+                                                    <Heading fontSize={'2xl'} fontFamily={'body'}>
+                                                        { this.state.winner.name }
+                                                    </Heading>
+                                                    <Text fontWeight={600} color={'gray.500'} size="sm">
+                                                        @{ this.state.winner.handle }
+                                                    </Text>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center md:flex-row text-center justify-center md:justify-between  gap-2">
+                                                <Box
+                                                    boxSize="6rem"
+                                                    borderRadius='full'
+                                                    bg='gray.400'
+                                                />
+                                                <div className="flex flex-col">
+                                                    <Heading fontSize={'2xl'} fontFamily={'body'}>
+                                                        { this.state.winner.name }
+                                                    </Heading>
+                                                    <Text fontWeight={600} color={'gray.500'} size="sm">
+                                                        @{ this.state.winner.handle }
+                                                    </Text>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                    <div className="hidden md:block">
+                                        <Button
+                                            colorScheme='teal'
+                                            disabled={!this.state.valid}
+                                            w={{ base: 'full', sm: 'auto' }}
+                                            onClick={this.handleSend}
+                                        >Giveaway</Button>
+                                    </div>
+                                </div>
+                                <div className='md:hidden'>
+                                    <Button
+                                        colorScheme='teal'
+                                        disabled={!this.state.valid}
+                                        w='full'
+                                        mt={2}
+                                        onClick={this.handleSend}
+                                    >Giveaway</Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <Button
+                                colorScheme='teal'
+                                w={{ base: 'full', sm: 'auto' }}
+                                mt={2}
+                                onClick={this.draw}
+                                disabled={this.state.entries.length === 0 || this.state.loadingState === 'loading'}
+                            >
+                                Draw
+                            </Button>
+                        )
+                    }
                 </div>
             </div>
         )

@@ -9,6 +9,7 @@ import Select from "../../ui/Select";
 import {ethers, providers} from "ethers";
 
 import ABI from '../../../abi/erc20.json'
+import { getBalance, send } from '../../../api'
 
 export default class BestModule extends Component {
     constructor(props) {
@@ -23,7 +24,8 @@ export default class BestModule extends Component {
 
     handleCurrencySelected = async (currency) => {
         this.setState({ selectedCurrency: currency })
-        const balance = await this.getBalance(currency)
+        const balance = await getBalance(currency, this.props.address)
+        this.setState( { balance: balance })
         this.validate(this.state.amount, balance)
     }
 
@@ -42,38 +44,8 @@ export default class BestModule extends Component {
         }
     }
 
-    getBalance = async (currency) => {
-        const provider = new providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner()
-        const tokenContract = new ethers.Contract(currency.address, ABI, provider)
-        const contractWithSigner = await tokenContract.connect(signer)
-        const res = await contractWithSigner.balanceOf(this.props.address)
-        const ethRes = ethers.utils.formatEther(res)
-        const balance = Number.parseFloat(ethRes).toFixed(6)
-        this.setState( { balance: balance.toString().replace('.000000', '') })
-        return balance.toString().replace('.000000')
-    }
-
-    send = async () => {
-        const provider = new providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner()
-        const winnerAddress = this.props.winner.ownedBy
-        const tokenContract = new ethers.Contract(this.state.selectedCurrency.address, ABI, provider)
-
-        const amount = ethers.utils.parseUnits(this.state.amount, this.state.selectedCurrency.decimals)
-        console.log(amount.toString())
-        const contractWithSigner = await tokenContract.connect(signer)
-
-        try {
-            let tx = await contractWithSigner.transfer(winnerAddress, amount)
-            console.log(tx)
-            await tx.wait()
-        } catch (e) {
-            console.log(e)
-        }
-
-        if (this.state.selectedCurrency && this.amount > 0) {
-        }
+    handleSend = async () => {
+        await send(this.props.winner.ownedBy, this.state.amount, this.state.selectedCurrency)
     }
 
     render() {
@@ -107,7 +79,7 @@ export default class BestModule extends Component {
                     </FormControl>
                 </div>
                 <div className="flex mt-4 z-10">
-                    <Button disabled={!this.state.valid} colorScheme='teal' w={{ base: 'full', sm: 'auto' }} onClick={this.send}>Giveaway</Button>
+                    <Button disabled={!this.state.valid} colorScheme='teal' w={{ base: 'full', sm: 'auto' }} onClick={this.handleSend}>Giveaway</Button>
                 </div>
             </div>
         )
