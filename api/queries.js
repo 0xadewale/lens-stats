@@ -968,12 +968,8 @@ query GlobalProtocolStats {
 `
 
 const explorePublications = `
-  query {
-    explorePublications(request: {
-      sortCriteria: TOP_COMMENTED,
-      publicationTypes: [POST, COMMENT, MIRROR],
-      limit: 10
-    }) {
+  query($request: ExplorePublicationRequest!) {
+    explorePublications(request: $request) {
       items {
         __typename 
         ... on Post {
