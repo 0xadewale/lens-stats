@@ -42,10 +42,8 @@ export default function Home() {
   async function fetchStats() {
     try {
       const response = await basicClient.query(globalProtocolStats).toPromise()
-      console.log(response)
       const stats = response.data.globalProtocolStats
       setStats(stats)
-      console.log(stats)
       setLoadingState('loaded')
     } catch (error) {
       console.log({ error })

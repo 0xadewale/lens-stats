@@ -68,7 +68,7 @@ export default function Tabs({ tabs, loading }) {
                 </Tab.List>
                 <Tab.Panels className="mt-2">
                   {Object.values(tabs).map((posts, idx) => (
-                      <Tab.Panel key={idx} className="px-3 focus:outline-none">
+                      <Tab.Panel key={idx} className="focus:outline-none">
                         <div className="rounded-md border border-gray-500">
                           {posts.map((post, index) => (
                               <Post post={post} key={index} />

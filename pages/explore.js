@@ -9,7 +9,6 @@ export default function Explore() {
 
   useEffect(() => {
     fetchData()
-    alert('fetch')
   },[])
 
 
@@ -32,7 +31,6 @@ export default function Explore() {
     let mirrors = []
     await getTopPublications("TOP_COMMENTED").then((response) => {
       comments = response
-      console.log(response)
     })
     await getTopPublications("TOP_COLLECTED").then((response) => {
       collects = response

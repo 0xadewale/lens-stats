@@ -99,7 +99,6 @@ export default class PostCollectorModule extends Component {
     }
 
     getWhoCollectedPublication = async (pub) => {
-        console.log("theme", this.props.theme)
         const client = await createClient()
         let entries = []
         let total = 0

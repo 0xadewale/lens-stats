@@ -58,7 +58,6 @@ export default function Giveaway({signIn}) {
             }
         }).toPromise()
         setPublications(pubs.data.publications.items)
-        console.log(pubs.data.publications.items)
         const stats = await getStats(pubs.data.publications.items)
         setStats(stats)
         setLoadedState('loaded')
