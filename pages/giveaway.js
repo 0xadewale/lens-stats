@@ -1,4 +1,4 @@
-import { Badge, Box, Button, FormControl, FormLabel, Image, Text } from "@chakra-ui/react";
+import { Badge, Box, Button, FormControl, FormLabel, Image, Text, useColorModeValue } from "@chakra-ui/react";
 import ModuleSelector from "../components/Giveaway/ModuleSelector";
 import {useContext, useEffect, useState} from "react";
 import BestModule from "../components/Giveaway/Form/BestModule";
@@ -40,6 +40,7 @@ export default function Giveaway({signIn}) {
     const [loadedState, setLoadedState] = useState('')
     const [publications, setPublications] = useState([])
     const context = useContext(AppContext)
+    const theme = useColorModeValue('light', 'dark')
     const { userAddress, profile: userProfile } = context
 
     useEffect(() => {
@@ -191,6 +192,7 @@ export default function Giveaway({signIn}) {
                                 address={userAddress}
                                 currencies={currencies}
                                 profile={userProfile}
+                                theme={theme}
                                 />
                         default:
                             return <div className="text-gray-500">Comming Soon</div>

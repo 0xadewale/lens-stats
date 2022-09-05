@@ -66,7 +66,6 @@ function MyApp({ Component, pageProps }) {
       const accounts = await window.ethereum.send(
         "eth_requestAccounts"
       )
-      setConnected(true)
       const account = accounts.result[0]
       setUserAddress(account)
       const urqlClient = await createClient()
@@ -76,6 +75,8 @@ function MyApp({ Component, pageProps }) {
       const provider = new providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner()
       const signature = await signer.signMessage(response.data.challenge.text)
+      setConnected(true)
+      console.log('Signature : ', signature)
       const authData = await urqlClient.mutation(authenticateMutation, {
         address: account, signature
       }).toPromise()
