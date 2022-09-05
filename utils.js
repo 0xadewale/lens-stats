@@ -9,9 +9,9 @@ export function trimString(string, length) {
 }
 
 export function parseJwt (token) {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+  let base64Url = token.split('.')[1];
+  let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
   }).join(''));
 
@@ -63,10 +63,10 @@ export function splitSignature(signature) {
 
 export function generateRandomColor(){
   let maxVal = 0xFFFFFF; // 16777215
-  let randomNumber = Math.random() * maxVal; 
+  let randomNumber = Math.random() * maxVal;
   randomNumber = Math.floor(randomNumber);
   randomNumber = randomNumber.toString(16);
-  let randColor = randomNumber.padStart(6, 0);   
+  let randColor = randomNumber.padStart(6, 0);
   return `#${randColor.toUpperCase()}`
 }
 

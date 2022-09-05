@@ -7,12 +7,11 @@ import {
     Input, Show, Spinner, Stack, Text, useColorModeValue
 } from "@chakra-ui/react";
 import Select from "../../ui/Select";
-import {ethers, providers} from "ethers";
+import {ethers} from "ethers";
 
-import ABI from '../../../abi/erc20.json'
 import PostSelector from '../PostSelector'
 import { createClient, getBalance, send, whoCollectedPublication } from '../../../api'
-import DataTable from 'react-data-table-component'
+import DataTable, { createTheme } from 'react-data-table-component'
 
 const columns = [
     {
@@ -54,6 +53,12 @@ const columns = [
     }
 ]
 
+createTheme('dark', {
+    background: {
+        default: 'transparent',
+    }
+});
+
 export default class PostCollectorModule extends Component {
     constructor(props) {
         super(props);
@@ -94,6 +99,7 @@ export default class PostCollectorModule extends Component {
     }
 
     getWhoCollectedPublication = async (pub) => {
+        console.log("theme", this.props.theme)
         const client = await createClient()
         let entries = []
         let total = 0
@@ -177,7 +183,7 @@ export default class PostCollectorModule extends Component {
                                     <div className="flex my-4">
                                         <FormControl>
                                             <FormLabel>Collectors</FormLabel>
-                                            <div>
+                                            <div className="py-1 bg-white border border-gray-500 rounded-md dark:bg-gray-900">
                                                 <DataTable
                                                     columns={columns}
                                                     data={this.state.entries}
@@ -185,7 +191,7 @@ export default class PostCollectorModule extends Component {
                                                     paginationComponentOptions={{
                                                         noRowsPerPage: true
                                                     }}
-                                                    theme='dark'
+                                                    theme={this.props.theme}
                                                 />
                                             </div>
                                         </FormControl>
