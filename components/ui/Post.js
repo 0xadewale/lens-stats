@@ -30,7 +30,7 @@ export default function Post({post}) {
           </div>
         </div>
         <div className="px-8 pt-8 font-medium leading-5">
-          <div className="flex">
+          <div className="text-ellipsis overflow-hidden">
             {post.metadata?.content}
           </div>
           {
