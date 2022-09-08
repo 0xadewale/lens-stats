@@ -16,7 +16,7 @@ const nextConfig = {
       },
       {
         source: '/sitemaps/:match*',
-        destination: 'https://sitemap.lentats.xyz/sitemaps/:match*'
+        destination: 'https://sitemap.lenstats.xyz/sitemaps/:match*'
       }
     ];
   },
