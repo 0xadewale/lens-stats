@@ -4,6 +4,9 @@ import { useRouter } from 'next/router'
 import { UserCard } from "../components/UserCard";
 import {Placeholders} from "../components/Placeholders";
 import {Center} from "@chakra-ui/react";
+import Head from 'next/head'
+import Seo from '../components/utils/Seo'
+import { APP_NAME } from '../constants'
 
 export default function Home() {
   const router = useRouter()
@@ -33,8 +36,11 @@ export default function Home() {
 
   return (
     <div>
+      <Seo
+          title={`Profiles | ${APP_NAME}`}
+      />
       {
-         loadingState === 'loading' && <Placeholders number={6} />
+         loadingState === 'loading' && <Placeholders number={4} />
       }
       {
         !profiles.length && (
