@@ -1,6 +1,8 @@
 import Tabs from '../components/Explore/Tabs'
 import { createClient, explorePublications } from '../api'
 import { useEffect, useState } from 'react'
+import Seo from '../components/utils/Seo'
+import { APP_NAME } from '../constants'
 
 export default function Explore() {
 
@@ -44,10 +46,16 @@ export default function Explore() {
 
 
     return (
-        <div className="container mx-auto">
-          <div className="flex justify-center">
-            <Tabs tabs={tabs} loading={loading} />
+        <>
+          <Seo
+              title={`Explore | ${APP_NAME}`}
+              description={`Explore top commented, collected and latest publications on Lens Protocole`}
+          />
+          <div className="container mx-auto">
+            <div className="flex justify-center">
+              <Tabs tabs={tabs} loading={loading} />
+            </div>
           </div>
-        </div>
+        </>
     )
 }

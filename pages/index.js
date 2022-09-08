@@ -1,21 +1,15 @@
 import { useState, useEffect, useContext } from 'react'
-import { createClient, basicClient, searchPublications, globalProtocolStats, timeline } from '../api'
-import { css } from '@emotion/css'
-import { ethers } from 'ethers'
-import { trimString, generateRandomColor } from '../utils'
+import { basicClient, globalProtocolStats } from '../api'
 import { AppContext } from '../context'
-import Link from 'next/link'
 import {
   Container,
   Stat,
   StatGroup,
   StatLabel,
   StatNumber,
-  Text,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
@@ -23,12 +17,7 @@ import {
   Show
 } from '@chakra-ui/react'
 import Image from 'next/image'
-
-const typeMap = {
-  Comment: "Comment",
-  Mirror: "Mirror",
-  Post: "Post"
-}
+import Seo from '../components/utils/Seo'
 
 export default function Home() {
   const [stats, setStats] = useState([])
@@ -59,13 +48,14 @@ export default function Home() {
 
   return (
     <div>
+      <Seo />
       <Container maxW='2xl'>
         {
           loadingState === 'no-results' && (
             <h2>No results....</h2>
           )
         }
-        <Text fontSize='4xl'>Lens Protocole Stats</Text>
+        <h1 className="text-4xl" >Lens Protocole Stats</h1>
         {
           loadingState === 'loaded' && (
               <div>

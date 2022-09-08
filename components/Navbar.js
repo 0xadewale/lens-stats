@@ -150,7 +150,7 @@ export function Navbar({
                     </Link>
                   </div>
                   <div>
-                    <Link href='/giveaway'>
+                    <Link href='/Index'>
                       <div className={`h-25 cursor-pointer my-1 py-1 pl-2 text-teal-800 font-semibold rounded-md w-full hover:bg-teal-100 ${router.pathname === '/giveaway' ? 'bg-teal-100' : ''}`}
                       >
                         Giveaway

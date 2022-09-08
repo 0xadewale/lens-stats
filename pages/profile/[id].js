@@ -17,16 +17,15 @@ import {
   Box,
   Button,
   Center,
-  Container,
   Flex,
   Heading,
   Image, Skeleton,
-  Spacer,
-  Stat, StatArrow, StatGroup, StatHelpText, StatLabel, StatNumber,
-  Text,
-  useColorModeValue
+  Stat, StatGroup, StatLabel, StatNumber,
+  Text
 } from "@chakra-ui/react";
 import {TopUserCard} from "../../components/TopUserCard";
+import Seo from '../../components/utils/Seo'
+import { APP_NAME } from '../../constants'
 
 export default function Profile() {
   const [profile, setProfile] = useState()
@@ -139,6 +138,11 @@ export default function Profile() {
 
   return (
     <div>
+      {profile?.name ? (
+          <Seo title={`${profile?.name} | ${APP_NAME}`} />
+      ) : (
+          <Seo title={`@${profile?.handle} | ${APP_NAME}`} />
+      )}
       {
         profile.coverPicture ? (
             <Image
