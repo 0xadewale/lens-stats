@@ -27,7 +27,7 @@ export function Footer() {
               <Flex>
                   <Stack direction='row'>
                       <Box>Made with ☕ by</Box>
-                      <Text color='purple.300' _hover={{ color: 'purple.500'}}>
+                      <Text color='purple.500' _hover={{ color: 'purple.700'}}>
                           <a
                               href="https://lenster.xyz/u/adewale.lens"
                               target="_blank"
@@ -38,12 +38,12 @@ export function Footer() {
               </Flex>
               <Flex py={4}>
                   <Stack direction='row' spacing={6}>
-                      <a href="https://twitter.com/crypto_adewale" target="_blank" rel="noreferrer">
+                      <a href="https://twitter.com/crypto_adewale" aria-label="Twitter link" target="_blank" rel="noreferrer">
                           <Text fontSize='xl'  color='twitter.400'>
                               <FontAwesomeIcon icon={faTwitter} />
                           </Text>
                       </a>
-                      <a href="https://github.com/0xadewale" target="_blank" rel="noreferrer">
+                      <a href="https://github.com/0xadewale" aria-label="Github link"  target="_blank" rel="noreferrer">
                           <Text fontSize='xl'>
                               <FontAwesomeIcon icon={faGithub} />
                           </Text>

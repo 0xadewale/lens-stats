@@ -48,6 +48,7 @@ export function Navbar({
                       mr={4}
                       variant='ghost'
                       onClick={toggleIsOpen}
+                      aria-label="Menu Button"
                   >
                     {
                       isOpen ? (
@@ -104,7 +105,7 @@ export function Navbar({
               </Flex>
             </Box>
             <Spacer />
-            <Button mr={2} variant='ghost' onClick={toggleColorMode}>
+            <Button mr={2} variant='ghost' aria-label="Theme button" onClick={toggleColorMode}>
               {colorMode === 'light' ? <MoonIcon /> : <SunIcon /> }
             </Button>
             {
