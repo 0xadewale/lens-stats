@@ -1,5 +1,5 @@
 import { createClient as createUrqlClient } from 'urql'
-import { getProfiles, getPublications, whoCollectedPublication } from './queries'
+import { getProfiles, getProfile, getPublications, whoCollectedPublication } from './queries'
 import { refreshAuthToken, generateRandomColor } from '../utils'
 import { ethers, providers } from 'ethers'
 import ABI from '../abi/erc20.json'
@@ -13,15 +13,18 @@ export const basicClient = new createUrqlClient({
   url: APIURL
 })
 
-export async function fetchProfile(id) {
+export async function fetchProfile(handle) {
   try {
     const urqlClient = await createClient()
-    const returnedProfile = await urqlClient.query(getProfiles, { id }).toPromise();
-    const profileData = returnedProfile.data.profiles.items[0]
+    const returnedProfile = await urqlClient.query(getProfile, {
+      request: { handle }
+    }).toPromise();
+    console.log(returnedProfile)
+    const profileData = returnedProfile.data.profile
     profileData.color = generateRandomColor()
     const pubs = await urqlClient.query(getPublications, {
       request: {
-        profileId: id,
+        profileId: profileData.id,
         publicationTypes: ['POST']
       }
     }).toPromise()
@@ -151,6 +154,7 @@ export async function send(to, amount, currency) {
 
 export {
   recommendProfiles,
+  getProfile,
   getProfiles,
   getDefaultProfile,
   getPublications,

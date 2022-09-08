@@ -14,7 +14,7 @@ import {
 
 export function UserCard({ user }) {
     return (
-        <Link href={`/profile/${user.profileId}`} style={{ textDecoration: 'none' }}>
+        <Link href={`/profile/${user.handle}`} style={{ textDecoration: 'none' }}>
             <Center py={4}>
                 <Stack
                     borderWidth="1px"

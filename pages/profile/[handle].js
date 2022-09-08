@@ -36,25 +36,25 @@ export default function Profile() {
   const [bestCommentator, setBestCommentator] = useState()
   const router = useRouter()
   const context = useContext(AppContext)
-  const { id } = router.query
+  const { handle } = router.query
   const { userAddress, profile: userProfile } = context
 
   useEffect(() => {
-    if (id) {
+    if (handle) {
       getProfile().then((res) => {
         getUserStats(res)
       })
     }
-    if (id && userAddress) {
+    if (handle && userAddress) {
       checkDoesFollow()
     }
-  }, [id, userAddress])
+  }, [handle, userAddress])
 
   async function unfollow() {
     try {
       const client = await createClient()
       const response = await client.mutation(createUnfollowTypedData, {
-        request: { profile: id }
+        request: { profile: profile.id }
       }).toPromise()
       const typedData = response.data.createUnfollowTypedData.typedData
       const contract = new ethers.Contract(
@@ -77,7 +77,7 @@ export default function Profile() {
     try {
       const {
         profile: profileData, publications: publicationData
-      } = await fetchProfile(id)
+      } = await fetchProfile(handle)
       setProfile(profileData)
       setPublications(publicationData)
       return publicationData
@@ -105,7 +105,7 @@ export default function Profile() {
         request: {
           followInfos: [{
             followerAddress: userAddress,
-            profileId: id
+            profileId: profile.id
           }]
         }
       }
@@ -121,7 +121,7 @@ export default function Profile() {
     )
 
     try {
-      const tx = await contract.follow([id], [0x0])
+      const tx = await contract.follow([profile.id], [0x0])
       setTimeout(() => {
         setDoesFollow(true)
       }, 2500)
@@ -134,7 +134,7 @@ export default function Profile() {
 
   if (!profile) return null
 
-  const profileOwner = userProfile?.id === id
+  const profileOwner = userProfile?.handle === handle
 
   return (
     <div>
