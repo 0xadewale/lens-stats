@@ -45,10 +45,13 @@ export default function Profile() {
         getUserStats(res)
       })
     }
-    if (handle && userAddress) {
+  }, [handle])
+
+  useEffect(() => {
+    if (profile && userAddress) {
       checkDoesFollow()
     }
-  }, [handle, userAddress])
+  }, [profile, userAddress])
 
   async function unfollow() {
     try {
