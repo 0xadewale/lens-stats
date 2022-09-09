@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTwitter, faGithub } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -10,7 +9,6 @@ import {
 } from '@chakra-ui/react'
 
 export function Footer() {
-  const router = useRouter()
 
   return (
       <footer>
@@ -27,7 +25,7 @@ export function Footer() {
               <Flex>
                   <Stack direction='row'>
                       <Box>Made with ☕ by</Box>
-                      <Text color='purple.500' _hover={{ color: 'purple.700'}}>
+                      <Text color='purple.600' _hover={{ color: 'teal.600'}}>
                           <a
                               href="https://lenster.xyz/u/adewale.lens"
                               target="_blank"
@@ -36,20 +34,20 @@ export function Footer() {
                       </Text>
                   </Stack>
               </Flex>
-              <Flex py={4}>
-                  <Stack direction='row' spacing={6}>
+              <div className="py-4">
+                  <div className="flex gap-6">
                       <a href="https://twitter.com/crypto_adewale" aria-label="Twitter link" target="_blank" rel="noreferrer">
-                          <Text fontSize='xl'  color='twitter.400'>
+                          <Text fontSize='xl'  color='twitter.500' w={7}>
                               <FontAwesomeIcon icon={faTwitter} />
                           </Text>
                       </a>
                       <a href="https://github.com/0xadewale" aria-label="Github link"  target="_blank" rel="noreferrer">
-                          <Text fontSize='xl'>
+                          <Text fontSize='xl'  color='gray.700' w={7} _dark={{ color: 'gray.200' }}>
                               <FontAwesomeIcon icon={faGithub} />
                           </Text>
                       </a>
-                  </Stack>
-              </Flex>
+                  </div>
+              </div>
           </Center>
         </Box>
       </footer>

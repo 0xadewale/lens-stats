@@ -102,8 +102,8 @@ export default function Home() {
                                   <Image
                                       src={`/assets/${revenu.asset.symbol.toLowerCase()}.svg`}
                                       alt="asset token image"
-                                      width={30}
-                                      height={30}
+                                      width={40}
+                                      height={40}
                                   />
                                 </Td>
                                 <Show above='md'>
