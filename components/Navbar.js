@@ -11,6 +11,7 @@ import {
   Button
 } from '@chakra-ui/react'
 import AccountDropdown from "./AccountDropdown";
+import Image from "next/image";
 
 export function Navbar({
     connected,
@@ -40,12 +41,11 @@ export function Navbar({
   return (
       <Box mb={2}>
         <nav className="navbar">
-          <Flex align='center'>
+          <div className="flex items-center gap-2">
             <Box p='4'>
-              <Flex align="center">
+              <div className="flex items-center gap-2">
                 <Show below='md'>
                   <Button
-                      mr={4}
                       variant='ghost'
                       onClick={toggleIsOpen}
                       aria-label="Menu Button"
@@ -60,11 +60,15 @@ export function Navbar({
                   </Button>
                 </Show>
                 <Show above='md'>
-                  <Box mr={2}>
-                    <Link href="/">
-                      <a>Lens Stats</a>
-                    </Link>
-                  </Box>
+                  <Link href="/">
+                    <Image
+                        className="cursor-pointer"
+                        src="/icon.webp"
+                        alt="Lenstats icon"
+                        width={40}
+                        height={40}
+                    />
+                  </Link>
                 </Show>
                 <Box>
                   <Input
@@ -76,7 +80,6 @@ export function Navbar({
                 <Show above='md'>
                   <Link href='/'>
                     <Button
-                        mx={2}
                         size='sm'
                         variant={router.pathname === '/' ? 'solid' : 'ghost'}
                     >
@@ -85,7 +88,6 @@ export function Navbar({
                   </Link>
                   <Link href='/giveaway'>
                     <Button
-                        mx={2}
                         size='sm'
                         variant={router.pathname === '/giveaway' ? 'solid' : 'ghost'}
                     >
@@ -94,7 +96,6 @@ export function Navbar({
                   </Link>
                   <Link href='/explore'>
                     <Button
-                        mx={2}
                         size='sm'
                         variant={router.pathname === '/explore' ? 'solid' : 'ghost'}
                     >
@@ -102,7 +103,7 @@ export function Navbar({
                     </Button>
                   </Link>
                 </Show>
-              </Flex>
+              </div>
             </Box>
             <Spacer />
             <Button mr={2} variant='ghost' aria-label="Theme button" onClick={toggleColorMode}>
@@ -137,7 +138,7 @@ export function Navbar({
                   </Badge>
               )
             }
-          </Flex>
+          </div>
         </nav>
         {
           isOpen && (
