@@ -6,7 +6,7 @@ import {
   doesFollow as doesFollowQuery,
   getStats,
   createUnfollowTypedData,
-  LENS_HUB_CONTRACT_ADDRESS,
+  LENS_HUB_CONTRACT_ADDRESS, profilePublicationRevenue, profileFollowRevenue,
 } from '../../api'
 import { ethers } from 'ethers'
 import { AppContext } from '../../context'
@@ -26,11 +26,13 @@ import {
 import {TopUserCard} from "../../components/TopUserCard";
 import Seo from '../../components/utils/Seo'
 import { APP_NAME } from '../../constants'
+import { UserRevenuCard } from '../../components/UserRevenuCard'
 
 export default function Profile() {
   const [profile, setProfile] = useState()
-  const [publications, setPublications] = useState([])
   const [doesFollow, setDoesFollow] = useState()
+  const [profileRevenue, setProfileRevenue] = useState()
+  const [followRevenue, setFollowRevenue] = useState()
   const [loadedState, setLoadedState] = useState('')
   const [bestCollector, setBestCollector] = useState()
   const [bestCommentator, setBestCommentator] = useState()
@@ -48,8 +50,12 @@ export default function Profile() {
   }, [handle])
 
   useEffect(() => {
-    if (profile && userAddress) {
-      checkDoesFollow()
+    if (profile) {
+      getProfileRevenue()
+      getFollowReveue()
+      if (userAddress) {
+        checkDoesFollow()
+      }
     }
   }, [profile, userAddress])
 
@@ -82,7 +88,6 @@ export default function Profile() {
         profile: profileData, publications: publicationData
       } = await fetchProfile(handle)
       setProfile(profileData)
-      setPublications(publicationData)
       return publicationData
     } catch (err) {
       console.log('error fetching profile...', err)
@@ -97,6 +102,116 @@ export default function Profile() {
       setLoadedState('loaded')
     } catch (err) {
       console.log('error fetching stats...', err)
+    }
+  }
+
+  async function getProfileRevenue() {
+    try {
+      let revenue = {
+        WMATIC: {
+          asset: {
+            name: "Wrapped Matic",
+            symbol: 'WMATIC'
+          },
+          total: 0
+        },
+        WETH: {
+          asset: {
+            name: "Wrapped Ether",
+            symbol: "WETH"
+          },
+          total: 0
+        },
+        DAI: {
+          asset: {
+            name: "(PoS) Dai Stablecoin",
+            symbol: "DAI"
+          },
+          total: 0
+        },
+        USDC: {
+          asset: {
+            name: "USD Coin (PoS)",
+            symbol: "USDC"
+          },
+          total: 0
+        },
+        NCT: {
+          asset: {
+            name: "Toucan Protocol: Nature Carbon Tonne",
+            symbol: "NCT"
+          },
+          total: 0
+        }
+      }
+      let client = await createClient()
+      const response = await client.query(profilePublicationRevenue, {
+        request: {
+          profileId: profile.id
+        }
+      }).toPromise()
+      const items = response.data.profilePublicationRevenue.items
+      for (let i = 0; i < items.length; i++) {
+        revenue[items[i].revenue.total.asset.symbol].total += parseInt(items[i].revenue.total.value)
+      }
+      setProfileRevenue(Object.values(revenue))
+    } catch (err) {
+      console.log('error fetching revenue...', err)
+    }
+  }
+
+  async function getFollowReveue() {
+    try {
+      let revenue = {
+        WMATIC: {
+          asset: {
+            name: "Wrapped Matic",
+            symbol: 'WMATIC'
+          },
+          total: 0
+        },
+        WETH: {
+          asset: {
+            name: "Wrapped Ether",
+            symbol: "WETH"
+          },
+          total: 0
+        },
+        DAI: {
+          asset: {
+            name: "(PoS) Dai Stablecoin",
+            symbol: "DAI"
+          },
+          total: 0
+        },
+        USDC: {
+          asset: {
+            name: "USD Coin (PoS)",
+            symbol: "USDC"
+          },
+          total: 0
+        },
+        NCT: {
+          asset: {
+            name: "Toucan Protocol: Nature Carbon Tonne",
+            symbol: "NCT"
+          },
+          total: 0
+        }
+      }
+      let client = await createClient()
+      const response = await client.query(profileFollowRevenue, {
+        request: {
+          profileId: profile.id
+        }
+      }).toPromise()
+      const items = response.data.profileFollowRevenue.revenues
+      for (let i = 0; i < items.length; i++) {
+        revenue[items[i].total.asset.symbol].total += parseInt(items[i].total.value)
+      }
+      setFollowRevenue(Object.values(revenue))
+    } catch (err) {
+      console.log('error fetching revenue...', err)
     }
   }
 
@@ -278,6 +393,38 @@ export default function Profile() {
       </Flex>
       <Flex mt={4}>
         <Box p={4} w='full'>
+          <div className="flex justify-center flex-col md:flex-row gap-4">
+            {
+                profileRevenue ? (
+                    <UserRevenuCard revenue={profileRevenue} label="Total posts revenue" />
+                ) : (
+                    <Skeleton
+                        h='26rem'
+                        w='20rem'
+                        rounded={'md'}
+                        borderWidth={1}
+                        borderRadius='lg'
+                        mx={4}
+                        my={6}
+                    />
+                )
+            }
+            {
+                followRevenue ? (
+                    <UserRevenuCard revenue={followRevenue} label="Total follow revenue" />
+                ) : (
+                    <Skeleton
+                        h='26rem'
+                        w='20rem'
+                        rounded={'md'}
+                        borderWidth={1}
+                        borderRadius='lg'
+                        mx={4}
+                        my={6}
+                    />
+                )
+            }
+          </div>
           {
             loadedState === 'loaded' ? (
                     <Flex alignItems='center' justify={{ base: 'center', md: 'center'}} flexDirection={{ base: 'column', md: 'row'}}>
