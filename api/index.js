@@ -165,7 +165,9 @@ export {
   getChallenge,
   timeline,
   globalProtocolStats,
-  whoCollectedPublication
+  whoCollectedPublication,
+  profilePublicationRevenue,
+  profileFollowRevenue
 } from './queries'
 
 export {

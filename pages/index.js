@@ -109,7 +109,7 @@ export default function Home() {
                                 <Show above='md'>
                                   <Td>{ revenu.asset.name}</Td>
                                 </Show>
-                                <Td>{ numberWithSpaces(revenu.value) } { revenu.asset.symbol }</Td>
+                                <Td textAlign="right">{ numberWithSpaces(revenu.value) } { revenu.asset.symbol }</Td>
                               </Tr>
                           ))
                       }
