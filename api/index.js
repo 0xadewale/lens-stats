@@ -161,6 +161,7 @@ export {
   searchProfiles,
   searchPublications,
   explorePublications,
+  exploreProfiles,
   doesFollow,
   getChallenge,
   timeline,

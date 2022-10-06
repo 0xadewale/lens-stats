@@ -86,6 +86,14 @@ export function Navbar({
                       Home
                     </Button>
                   </Link>
+                  <Link href='/leaderboard'>
+                    <Button
+                        size='sm'
+                        variant={router.pathname === '/leaderboard' ? 'solid' : 'ghost'}
+                    >
+                      Leaderboard
+                    </Button>
+                  </Link>
                   <Link href='/giveaway'>
                     <Button
                         size='sm'
@@ -148,6 +156,13 @@ export function Navbar({
                     <Link href='/'>
                       <div className={`h-25 cursor-pointer my-1 py-1 pl-2 text-teal-800 font-semibold rounded-md w-full hover:bg-teal-100 ${router.pathname === '/' ? 'bg-teal-100' : ''}`}>
                         Home
+                      </div>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link href='/leaderboard'>
+                      <div className={`h-25 cursor-pointer my-1 py-1 pl-2 text-teal-800 font-semibold rounded-md w-full hover:bg-teal-100 ${router.pathname === '/leaderboard' ? 'bg-teal-100' : ''}`}>
+                        Leaderboard
                       </div>
                     </Link>
                   </div>
