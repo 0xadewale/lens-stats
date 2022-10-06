@@ -42,6 +42,7 @@ export function TopUserCard({ user, label }) {
                             color={useColorModeValue('gray.700', 'gray.400')}
                             px={3}
                             noOfLines={2}
+                            w={'18rem'}
                         >
                             { user.bio }
                         </Text>
