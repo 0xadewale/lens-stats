@@ -168,7 +168,8 @@ export {
   globalProtocolStats,
   whoCollectedPublication,
   profilePublicationRevenue,
-  profileFollowRevenue
+  profileFollowRevenue,
+  mutualFollowersProfiles
 } from './queries'
 
 export {

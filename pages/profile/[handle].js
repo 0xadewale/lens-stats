@@ -6,7 +6,7 @@ import {
   doesFollow as doesFollowQuery,
   getStats,
   createUnfollowTypedData,
-  LENS_HUB_CONTRACT_ADDRESS, profilePublicationRevenue, profileFollowRevenue,
+  LENS_HUB_CONTRACT_ADDRESS, profilePublicationRevenue, profileFollowRevenue, mutualFollowersProfiles,
 } from '../../api'
 import { ethers } from 'ethers'
 import { AppContext } from '../../context'
@@ -18,8 +18,8 @@ import {
   Button,
   Center,
   Flex,
-  Heading,
-  Image, Skeleton,
+  Heading, Hide,
+  Image, Show, Skeleton,
   Stat, StatGroup, StatLabel, StatNumber,
   Text
 } from "@chakra-ui/react";
@@ -27,15 +27,19 @@ import {TopUserCard} from "../../components/TopUserCard";
 import Seo from '../../components/utils/Seo'
 import { APP_NAME } from '../../constants'
 import { UserRevenuCard } from '../../components/UserRevenuCard'
+import Modal from '../../components/ui/Modal'
+import Link from 'next/link'
 
 export default function Profile() {
   const [profile, setProfile] = useState()
   const [doesFollow, setDoesFollow] = useState()
+  const [mutualFollowers, setMultualFollowers] = useState()
   const [profileRevenue, setProfileRevenue] = useState()
   const [followRevenue, setFollowRevenue] = useState()
   const [loadedState, setLoadedState] = useState('')
   const [bestCollector, setBestCollector] = useState()
   const [bestCommentator, setBestCommentator] = useState()
+  const [openModal, setOpenModal] = useState(false)
   const router = useRouter()
   const context = useContext(AppContext)
   const { handle } = router.query
@@ -55,9 +59,14 @@ export default function Profile() {
       getFollowReveue()
       if (userAddress) {
         checkDoesFollow()
+        getMultualFollowers()
       }
     }
-  }, [profile, userAddress])
+  }, [profile, userAddress, userProfile])
+
+  let closeModal = () => {
+    setOpenModal(false)
+  }
 
   async function unfollow() {
     try {
@@ -231,6 +240,14 @@ export default function Profile() {
     setDoesFollow(response.data.doesFollow[0].follows)
   }
 
+  async function getMultualFollowers() {
+    const urqlClient = await createClient()
+    const response = await urqlClient.query(mutualFollowersProfiles, {
+      viewingProfileId: profile.id, yourProfileId: userProfile.id
+    }).toPromise()
+    setMultualFollowers(response.data.mutualFollowersProfiles.items)
+  }
+
   async function followUser() {
     const contract = new ethers.Contract(
       LENS_HUB_CONTRACT_ADDRESS,
@@ -306,7 +323,7 @@ export default function Profile() {
                 <Heading textAlign={{ base: 'center', md: 'left'}} fontSize={'2xl'} fontFamily={'body'} mb={4}>
                   { profile.handle }
                 </Heading>
-                <Flex justify='center' textAlign={{ base: 'center', md: 'left'}}>
+                <Flex justify={{ base: 'center', md: 'left'}} textAlign={{ base: 'center', md: 'left'}}>
                   <Box>
                     <Text fontWeight={600}>
                       { profile.stats.totalFollowers }
@@ -330,6 +347,55 @@ export default function Profile() {
                     <Text fontWeight={500} color={'gray.500'} size="sm">
                       Publications
                     </Text>
+                  </Box>
+                </Flex>
+                <Flex mt={2}>
+                  <Box>
+                    {
+                        mutualFollowers && (
+                            <div
+                                className="flex flex-row items-center gap-1 text-sm font-light cursor-pointer hover:underline text-gray-700 dark:text-gray-300"
+                                onClick={() => setOpenModal(true)}
+                            >
+                              Follwed by {
+                              mutualFollowers.slice(0, 2).map((item, index) => (
+                                  <>
+                                    <Show below="md">
+                                      {
+                                        index === 1 ? (
+                                            <>{item.handle}</>
+                                        ) : (
+                                            <>{item.handle}, </>
+                                        )
+                                      }
+                                    </Show>
+                                    <Show above="md">
+                                      <div key={index} className="flex items-center gap-1">
+                                        {
+                                            item.picture && (
+                                                <Image
+                                                    src={item.picture.original?.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                                                    w={'1.5rem'}
+                                                    h={'1.5rem'}
+                                                    borderRadius='full'
+                                                    className='hidden md:block'
+                                                />
+                                            )
+                                        }
+                                        <span>{item.handle}</span>
+                                      </div>
+                                    </Show>
+                                  </>
+                              ))
+                            }
+                              {
+                                mutualFollowers.length > 2 && (
+                                    <>and {mutualFollowers.length - 2} more users your follow</>
+                                  )
+                              }
+                            </div>
+                        )
+                    }
                   </Box>
                 </Flex>
               </Box>
@@ -362,6 +428,49 @@ export default function Profile() {
           </Flex>
         </Box>
       </Flex>
+      <Modal isOpen={openModal} onClose={closeModal} title="Followers you know">
+        {
+          mutualFollowers && mutualFollowers.map((user, index) => (
+              <Link
+                  href={`/profile/${user.handle}`}
+                  key={index}
+              >
+                <div
+                    className="flex items-center gap-2 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-700 my-2 p-2 rounded-md"
+                    onClick={() => setOpenModal(false)}
+                >
+                  <div>
+                    {
+                      user.picture && user.picture.original ? (
+                          <Image
+                              src={user.picture.original.url.replace('ipfs://', 'https://ipfs.io/ipfs/')}
+                              alt="user profile picture"
+                              objectFit="cover"
+                              boxSize="2.5rem"
+                              borderRadius='full'
+                          />
+                      ) : (
+                          <Box
+                              bg='gray.500'
+                              boxSize="2.5rem"
+                              borderRadius='full'
+                          />
+                      )
+                    }
+                  </div>
+                  <div>
+                    <div className="flex">
+                      <div className="font-semibold">{user.name}</div>
+                    </div>
+                    <div className="flex">
+                      <div className="text-sm">{user.handle}</div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+          ))
+        }
+      </Modal>
       <Flex mt={4}>
         <Box
             w='full'
