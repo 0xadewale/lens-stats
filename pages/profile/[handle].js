@@ -352,7 +352,7 @@ export default function Profile() {
                 <Flex mt={2}>
                   <Box>
                     {
-                        mutualFollowers && mutualFollowers.length > 0 (
+                        mutualFollowers && mutualFollowers.length > 0 && (
                             <div
                                 className="flex flex-row items-center gap-1 text-sm font-light cursor-pointer hover:underline text-gray-700 dark:text-gray-300"
                                 onClick={() => setOpenModal(true)}
