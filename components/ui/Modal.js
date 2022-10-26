@@ -1,9 +1,7 @@
-import {useState, Fragment, Component} from 'react'
-import {RadioGroup} from '@headlessui/react'
-import {Badge, Button} from "@chakra-ui/react";
-import {Dialog, Transition} from "@headlessui/react";
-import { XIcon, CheckCircleIcon } from '@heroicons/react/solid'
-import {AddIcon} from "@chakra-ui/icons";
+import { Fragment, Component } from 'react'
+import { Button } from "@chakra-ui/react";
+import { Dialog, Transition } from "@headlessui/react";
+import { XIcon } from '@heroicons/react/solid'
 
 export default class Modal extends Component {
   constructor(props) {
